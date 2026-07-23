@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EMALY GROUP · Launch Your First Digital Product — You Keep 70%</title>
+<meta name="description" content="Ebooks, paid communities, your own app — built in your voice, under your brand, in as little as 2 weeks. $0 upfront. You keep 70% of every sale.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%230A1A3A'/%3E%3Ccircle cx='16' cy='16' r='9' fill='%231E86E0'/%3E%3Cpath d='M4 20 L28 10' stroke='%23F0A93A' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
+</head>
+<body>
+
+<!-- ============ SITE-WIDE STARFIELD (fixed) ============ -->
+<div class="starfield" aria-hidden="true">
+  <div class="stars stars-1"></div>
+  <div class="stars stars-2"></div>
+  <div class="stars stars-3"></div>
+  <div class="shooting-star"></div>
+  <div class="grain"></div>
+</div>
+
+<!-- ============ TRAJECTORY LINE + TRAVELING ROCKET ============ -->
+<div class="trajectory" aria-hidden="true"></div>
+<div class="scroll-rocket" id="scrollRocket" aria-hidden="true">
+  <svg viewBox="0 0 28 40" width="28" height="40">
+    <path d="M14 0 C19 8 20 16 20 24 L8 24 C8 16 9 8 14 0 Z" fill="#1E86E0"/>
+    <path d="M8 24 L3 32 L8 29 Z" fill="#10275A"/>
+    <path d="M20 24 L25 32 L20 29 Z" fill="#10275A"/>
+    <circle cx="14" cy="14" r="3" fill="#39A9F6"/>
+    <path class="exhaust" d="M11 24 L14 38 L17 24 Z" fill="#F0A93A"/>
+  </svg>
+</div>
+
+<!-- ============ NAV ============ -->
+<nav class="nav" id="nav">
+  <a class="nav-logo" href="#launch" aria-label="EMALY Group home">
+    <svg class="nav-emblem" viewBox="0 0 36 36" width="36" height="36" aria-hidden="true">
+      <circle cx="18" cy="18" r="16" fill="none" stroke="#39A9F6" stroke-opacity="0.4" stroke-width="1"/>
+      <circle cx="18" cy="18" r="10" fill="#1E86E0"/>
+      <path d="M4 23 L32 11" stroke="#F0A93A" stroke-width="2.5" stroke-linecap="round"/>
+      <text x="18" y="22.5" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="12" fill="#DBE2EC">E</text>
+    </svg>
+    <span class="nav-wordmark">EMALY</span>
+  </a>
+  <div class="nav-links">
+    <a href="#mission">Mission</a>
+    <a href="#products">Products</a>
+    <a href="#split">The Split</a>
+    <a href="#preflight">Pre-Flight</a>
+  </div>
+  <a class="btn btn-primary btn-nav" href="#preflight">Apply</a>
+</nav>
+
+<main>
+
+<!-- ============ 1 · HERO — LAUNCH PAD ============ -->
+<section class="section hero" id="launch">
+  <div class="sun" aria-hidden="true"></div>
+  <div class="container hero-inner">
+    <p class="eyebrow">EMALY GROUP · MISSION: YOUR FIRST DIGITAL PRODUCT</p>
+    <h1>Launch your first digital product in as little as 2 weeks. You keep <em class="hl">70%</em> of every sale.</h1>
+    <p class="sub center">Ebooks, paid communities, your own app — built in your voice, under your brand.<br>You're the face of the mission. We're mission control.</p>
+    <div class="hero-ctas">
+      <a class="btn btn-primary btn-lg" href="#preflight">🚀 Start Pre-Flight Check</a>
+      <a class="btn btn-ghost" href="#mission">See the mission ↓</a>
+    </div>
+    <div class="trust-strip">
+      <div class="chip"><span class="stat-num" data-count="3.3" data-suffix="M+" data-decimals="1">0</span><span class="chip-label">partner audience</span></div>
+      <div class="chip"><span class="stat-num" data-count="700" data-suffix="+">0</span><span class="chip-label">paying members</span></div>
+      <div class="chip"><span class="stat-num" data-count="0" data-prefix="$">$0</span><span class="chip-label">upfront cost</span></div>
+      <div class="chip"><span class="stat-num" data-count="48" data-suffix="h">0</span><span class="chip-label">response time</span></div>
+    </div>
+  </div>
+  <!-- Earth horizon + rocket on the pad -->
+  <div class="horizon" aria-hidden="true">
+    <div class="atmosphere"></div>
+    <div class="earth-arc"></div>
+    <div class="pad-rocket">
+      <svg viewBox="0 0 40 90" width="40" height="90">
+        <path d="M20 0 C28 12 30 26 30 44 L10 44 C10 26 12 12 20 0 Z" fill="#1E86E0"/>
+        <path d="M10 44 L2 60 L10 54 Z" fill="#10275A"/>
+        <path d="M30 44 L38 60 L30 54 Z" fill="#10275A"/>
+        <circle cx="20" cy="22" r="4.5" fill="#39A9F6"/>
+        <rect x="13" y="44" width="14" height="8" rx="2" fill="#10275A"/>
+      </svg>
+      <div class="engine-glow"></div>
+      <div class="smoke smoke-1"></div>
+      <div class="smoke smoke-2"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2 · THE PROBLEM — ESCAPE THEIR ORBIT ============ -->
+<section class="section" id="mission">
+  <div class="planet-marker" aria-hidden="true"><div class="planet planet-gray"><span class="satellite"></span></div></div>
+  <div class="container">
+    <p class="eyebrow">WHY MOST CREATORS STAY BROKE</p>
+    <h2>Stop orbiting other people's brands. Build your own <em class="hl">gravity</em>.</h2>
+
+    <div class="orbit-diagram glass" id="orbitDiagram" aria-label="Diagram: a creator breaking out of a brand's orbit and forming their own">
+      <div class="od-stage od-stage-brand">
+        <div class="od-brand-planet"><span>THE BRAND</span></div>
+        <div class="od-orbit-ring"></div>
+        <div class="od-you-orbit"><div class="od-you-dot"><span>YOU</span></div></div>
+      </div>
+      <div class="od-stage od-stage-you">
+        <div class="od-you-planet"><span>YOU</span></div>
+        <div class="od-cust-orbit"><div class="od-cust-dot"></div></div>
+        <div class="od-cust-orbit od-cust-orbit-2"><div class="od-cust-dot"></div></div>
+        <span class="od-cust-label">YOUR CUSTOMERS</span>
+      </div>
+    </div>
+
+    <div class="copy-lines">
+      <p>Every sponsored post makes you a satellite: their product, their customer list, a one-time fee. Your credibility spent, their gravity grown.</p>
+      <p>A product with your name flips it — the customers orbit you, and the revenue repeats.</p>
+      <p>The only reason most creators never launch is the build. That's the part we do.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3 · WHAT WE BUILD — THREE WORLDS ============ -->
+<section class="section" id="products">
+  <div class="planet-marker" aria-hidden="true">
+    <div class="planet-cluster">
+      <div class="planet planet-sm planet-blue"></div>
+      <div class="planet planet-sm planet-ringed"></div>
+      <div class="planet planet-sm planet-glow"></div>
+    </div>
+  </div>
+  <div class="container">
+    <p class="eyebrow">THE PRODUCTS</p>
+    <h2>Three <em class="hl">worlds</em> we can build under your name.</h2>
+    <div class="cards-3">
+      <div class="glass card product-card">
+        <div class="planet planet-md planet-blue" aria-hidden="true"></div>
+        <h3>The Ebook</h3>
+        <p>Sells 24/7 while you sleep. Your ideas, professionally written and designed, delivered automatically the second someone pays.</p>
+      </div>
+      <div class="glass card product-card">
+        <div class="planet planet-md planet-ringed" aria-hidden="true"></div>
+        <h3>The Paid Community</h3>
+        <p>Revenue that repeats every month. Automated onboarding, billing and retention under your brand.</p>
+      </div>
+      <div class="glass card product-card">
+        <div class="planet planet-lg planet-glow" aria-hidden="true"></div>
+        <h3>Your Own App</h3>
+        <p>Your name on their home screen. Courses, classes and community inside an app that carries your brand, not a platform's.</p>
+      </div>
+    </div>
+    <div class="glass card wide-card amber-border">
+      <p><strong>⚡ A different world in mind?</strong> Bring the vision. If it monetizes your audience, we'll engineer it.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4 · THE FLIGHT PATH ============ -->
+<section class="section" id="flightpath">
+  <div class="planet-marker" aria-hidden="true">
+    <svg width="56" height="24" viewBox="0 0 56 24"><path d="M2 20 C 16 4, 40 4, 54 12" fill="none" stroke="#F0A93A" stroke-width="2" stroke-dasharray="3 4" stroke-linecap="round"/><circle cx="2" cy="20" r="3" fill="#39A9F6"/><circle cx="28" cy="7" r="3" fill="#1E86E0"/><circle cx="54" cy="12" r="3" fill="#F0A93A"/></svg>
+  </div>
+  <div class="container">
+    <p class="eyebrow">RECOMMENDED FLIGHT PATH</p>
+    <h2>Not sure where to start? There's a proven <em class="hl">route</em>.</h2>
+    <div class="route-map">
+      <div class="route-line" aria-hidden="true"></div>
+      <div class="route-stop">
+        <div class="planet planet-md planet-blue" aria-hidden="true"></div>
+        <div class="route-copy">
+          <span class="route-tag">START</span>
+          <h3>The Ebook</h3>
+          <p>Fastest build (1–2 weeks), lowest lift for you, proves your audience buys. One partner sold 250+ copies to a 99.6K audience — that's 1 in 400 followers.</p>
+        </div>
+      </div>
+      <div class="route-stop">
+        <div class="planet planet-md planet-ringed" aria-hidden="true"></div>
+        <div class="route-copy">
+          <span class="route-tag">THEN</span>
+          <h3>Community &amp; live classes</h3>
+          <p>The buyers become members; one-time sales become monthly revenue.</p>
+        </div>
+      </div>
+      <div class="route-stop">
+        <div class="planet planet-md planet-glow" aria-hidden="true"></div>
+        <div class="route-copy">
+          <span class="route-tag">THEN</span>
+          <h3>Your app</h3>
+          <p>The full ecosystem, on your customers' home screens.</p>
+        </div>
+      </div>
+    </div>
+    <p class="route-note">Every mission is custom — but if you're unsure, this is the route we recommend, because it's the one we've flown before.</p>
+  </div>
+</section>
+
+<!-- ============ 5 · HOW IT WORKS — THE COUNTDOWN ============ -->
+<section class="section" id="process">
+  <div class="planet-marker" aria-hidden="true">
+    <svg width="44" height="44" viewBox="0 0 44 44"><path d="M8 30 A 16 16 0 0 1 36 22" fill="none" stroke="#39A9F6" stroke-width="2.5" stroke-linecap="round"/><line x1="22" y1="26" x2="22" y2="40" stroke="#2B3550" stroke-width="3"/><line x1="14" y1="40" x2="30" y2="40" stroke="#2B3550" stroke-width="3" stroke-linecap="round"/><circle cx="30" cy="12" r="2.5" fill="#F0A93A"/></svg>
+  </div>
+  <div class="container">
+    <p class="eyebrow">THE MISSION PLAN</p>
+    <h2>From first call to <em class="hl">liftoff</em> in 1–2 weeks.</h2>
+    <div class="countdown">
+      <div class="countdown-line" aria-hidden="true"><div class="countdown-progress" id="countdownProgress"></div></div>
+      <div class="glass card cd-card"><span class="tminus">T-5</span><h3>Strategy call — 30 min</h3><p>We find the product your audience is already asking for. Not a fit? We say so.</p></div>
+      <div class="glass card cd-card"><span class="tminus">T-4</span><h3>We build — 1–2 weeks</h3><p>Writing, design, sales page, payments, delivery. You approve every word.</p></div>
+      <div class="glass card cd-card"><span class="tminus">T-3</span><h3>Launch kit handed over</h3><p>Word-for-word scripts in your voice, content calendar, full marketing plan. You never guess what to say.</p></div>
+      <div class="glass card cd-card"><span class="tminus">T-2</span><h3>Countdown</h3><p>Checkout tested, delivery automated, mission control on standby.</p></div>
+      <div class="glass card cd-card"><span class="tminus">T-1</span><h3>LIFTOFF</h3><p>You announce. From that second, payments, delivery and support are ours. Launch week: a direct line to your build team.</p></div>
+      <div class="glass card cd-card"><span class="tminus">T+∞</span><h3>Orbit</h3><p>Sales reporting, then the next stage of the flight path.</p></div>
+    </div>
+    <div class="section-cta"><a class="btn btn-primary btn-lg" href="#preflight">🚀 Start Pre-Flight Check</a></div>
+  </div>
+</section>
+
+<!-- ============ 6 · THE SPLIT ============ -->
+<section class="section" id="split">
+  <div class="planet-marker" aria-hidden="true"><div class="planet planet-sun"></div></div>
+  <div class="container">
+    <p class="eyebrow">FULL TRANSPARENCY</p>
+    <h2>You keep 70%. We keep 30%. That's the <em class="hl">whole deal</em>.</h2>
+    <div class="split-visual">
+      <div class="split-70"><span class="split-count stat-num" data-count="70" data-suffix="%">0</span></div>
+      <div class="split-bar" id="splitBar">
+        <div class="split-you"><span>YOU — 70%</span></div>
+        <div class="split-emaly"><span>EMALY — 30%</span></div>
+      </div>
+    </div>
+    <div class="chips-row">
+      <span class="pill">✓ $0 setup fees</span>
+      <span class="pill">✓ $0 monthly fees</span>
+      <span class="pill">✓ We earn only when you earn</span>
+    </div>
+    <p class="split-line">Most companies hide their terms until you're on a call. Ours are in orbit around the sun.</p>
+  </div>
+</section>
+
+<!-- ============ 7 · GHOST CLAUSE — DARK SIDE OF THE MOON ============ -->
+<section class="section" id="ghost">
+  <div class="planet-marker" aria-hidden="true"><div class="planet planet-halfmoon"></div></div>
+  <div class="container">
+    <p class="eyebrow">THE GHOST CLAUSE</p>
+    <h2>To your audience, it's 100% yours. We operate on the <em class="hl">dark side</em>.</h2>
+    <div class="moon-visual" aria-label="A moon half lit, half in shadow — your brand in the light, EMALY in the dark">
+      <div class="moon">
+        <span class="moon-lit-label">YOUR NAME · YOUR BRAND · YOUR PRODUCT</span>
+        <span class="moon-dark-label">emaly</span>
+      </div>
+    </div>
+    <div class="cards-3 partner-cards">
+      <div class="glass card partner-card">
+        <div class="silhouette" aria-hidden="true"><span class="lock">🔒</span></div>
+        <p class="partner-metric"><span class="hl">798K</span> audience · <span class="hl">500+</span> paying members</p>
+      </div>
+      <div class="glass card partner-card">
+        <div class="silhouette" aria-hidden="true"><span class="lock">🔒</span></div>
+        <p class="partner-metric"><span class="hl">149K</span> audience · <span class="hl">200+</span> members</p>
+      </div>
+      <div class="glass card partner-card">
+        <div class="silhouette" aria-hidden="true"><span class="lock">🔒</span></div>
+        <p class="partner-metric"><span class="hl">99.6K</span> audience · <span class="hl">250+</span> copies sold</p>
+      </div>
+    </div>
+    <p class="caption">Partners stay unnamed by design. Verified case studies shared privately, with their permission.</p>
+    <div class="copy-lines">
+      <p>No client names or faces on this site — that's the product working as designed. No "powered by" badge, no trace of us anywhere your audience looks.</p>
+      <p>You did build it: the ideas, the voice, the trust. We're the engineering underneath.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 8 · MISSIONS FLOWN ============ -->
+<section class="section" id="missions">
+  <div class="planet-marker" aria-hidden="true">
+    <svg width="48" height="30" viewBox="0 0 48 30"><circle cx="8" cy="20" r="2" fill="#DBE2EC"/><circle cx="20" cy="8" r="2.6" fill="#39A9F6"/><circle cx="34" cy="16" r="1.8" fill="#DBE2EC"/><circle cx="42" cy="6" r="2.2" fill="#F0A93A"/><circle cx="28" cy="26" r="1.6" fill="#DBE2EC"/></svg>
+  </div>
+  <div class="container">
+    <p class="eyebrow">MISSIONS FLOWN</p>
+    <h2>Live products. Real buyers. Quiet <em class="hl">partners</em>.</h2>
+    <div class="stat-grid">
+      <div class="glass card stat-card"><span class="stat-num" data-count="3.3" data-suffix="M+" data-decimals="1">0</span><p>combined partner audience</p></div>
+      <div class="glass card stat-card"><span class="stat-num" data-count="700" data-suffix="+">0</span><p>paying members today</p></div>
+      <div class="glass card stat-card"><span class="stat-num stat-ratio">1 in 400</span><p>followers bought one partner's ebook</p></div>
+      <div class="glass card stat-card"><span class="stat-num" data-count="100" data-suffix="%">0</span><p>of delivery, payments &amp; onboarding automated</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 9 · PLATFORMS vs MISSION CONTROL ============ -->
+<section class="section" id="compare">
+  <div class="planet-marker" aria-hidden="true">
+    <div class="planet-cluster"><div class="planet planet-sm planet-gray"></div><div class="planet planet-sm planet-glow"></div></div>
+  </div>
+  <div class="container">
+    <p class="eyebrow">THE HONEST COMPARISON</p>
+    <h2>A platform sells you a rocket kit. We fly the <em class="hl">mission</em>.</h2>
+    <div class="compare-row">
+      <div class="glass card compare-card">
+        <h3>Platforms</h3>
+        <p class="compare-sub">Hotmart, Gumroad, Stan…</p>
+        <p>~10% or a subscription for checkout and hosting. You still write, design, launch, and answer every customer. The kits have existed for 15 years; most creators still never launch.</p>
+      </div>
+      <div class="glass card compare-card">
+        <h3>Brand deals</h3>
+        <p class="compare-sub">Someone else's planet</p>
+        <p>Paid once to orbit someone else's planet. Their product, their customer list.</p>
+      </div>
+      <div class="glass card compare-card compare-emaly">
+        <span class="mission-tag">THE MISSION</span>
+        <h3>EMALY</h3>
+        <p class="compare-sub">Full crew, mission control</p>
+        <p>30% buys the checkout <strong>plus</strong> writing, design, launch scripts, marketing strategy, and daily operations. A full crew, paid only when you're paid.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 10 · MISSION RULES ============ -->
+<section class="section" id="rules">
+  <div class="container">
+    <div class="glass card rules-panel">
+      <h2>Mission rules we never <em class="hl">break</em>.</h2>
+      <ul class="rules-list">
+        <li>✓ Never a cent upfront</li>
+        <li>✓ Never own your brand, content or audience</li>
+        <li>✓ Never publish without your sign-off</li>
+        <li>✓ Never reveal the partnership</li>
+        <li>✓ Never disappear after launch</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 11 · PRE-FLIGHT CHECK — THE QUIZ ============ -->
+<section class="section" id="preflight">
+  <div class="planet-marker" aria-hidden="true">
+    <svg width="44" height="44" viewBox="0 0 44 44"><rect x="8" y="34" width="28" height="4" rx="2" fill="#2B3550"/><path d="M22 6 C26 12 27 19 27 26 L17 26 C17 19 18 12 22 6 Z" fill="#1E86E0"/><path d="M17 26 L13 33 L17 30 Z" fill="#10275A"/><path d="M27 26 L31 33 L27 30 Z" fill="#10275A"/><path d="M20 27 L22 33 L24 27 Z" fill="#F0A93A"/></svg>
+  </div>
+  <div class="container quiz-container">
+    <div class="glass quiz-panel" id="quizPanel">
+      <div class="quiz-progress-wrap">
+        <span class="quiz-progress-label">PRE-FLIGHT CHECK</span>
+        <div class="quiz-progress-track"><div class="quiz-progress-bar" id="quizProgress"></div></div>
+      </div>
+      <div class="quiz-screen" id="quizScreen">
+        <!-- rendered by script.js -->
+      </div>
+    </div>
+    <div class="launch-rocket" id="launchRocket" aria-hidden="true">
+      <svg viewBox="0 0 40 90" width="40" height="90">
+        <path d="M20 0 C28 12 30 26 30 44 L10 44 C10 26 12 12 20 0 Z" fill="#1E86E0"/>
+        <path d="M10 44 L2 60 L10 54 Z" fill="#10275A"/>
+        <path d="M30 44 L38 60 L30 54 Z" fill="#10275A"/>
+        <circle cx="20" cy="22" r="4.5" fill="#39A9F6"/>
+        <path d="M14 44 L20 72 L26 44 Z" fill="#F0A93A"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 12 · MISSION FAQ ============ -->
+<section class="section" id="faq">
+  <div class="container">
+    <p class="eyebrow">MISSION FAQ</p>
+    <h2>Questions from the <em class="hl">crew</em>.</h2>
+    <div class="faq-list">
+      <details class="glass faq-item"><summary>What does this cost me?</summary><p>Nothing upfront, nothing monthly. We earn 30% of what the product generates. Zero sales = zero for us.</p></details>
+      <details class="glass faq-item"><summary>Hotmart or Gumroad takes ~10% — why give you 30%?</summary><p>Their ~10% buys a checkout. Our 30% buys the checkout plus writing, design, launch scripts, marketing and daily operations — a crew paid only on results.</p></details>
+      <details class="glass faq-item"><summary>Who owns the product?</summary><p>You do — name, IP, customer relationships, forever.</p></details>
+      <details class="glass faq-item"><summary>I don't have time.</summary><p>That's the design: a few batched hours before launch, zero on operations after.</p></details>
+      <details class="glass faq-item"><summary>What if my audience doesn't buy?</summary><p>You've risked no money, and the launch scripts protect your credibility either way. We vet every mission against live conversion data first.</p></details>
+      <details class="glass faq-item"><summary>How long until launch?</summary><p>Strategy call, 1–2 weeks of build, then liftoff. Most partners see their first sale within a month of the first call.</p></details>
+      <details class="glass faq-item"><summary>Why not build it myself?</summary><p>You can — the kits are cheap. What can't be downloaded is a crew that has flown these missions with real audiences.</p></details>
+      <details class="glass faq-item"><summary>I don't know what product fits.</summary><p>The pre-flight check and strategy call solve that. Default route: ebook first, then community, then the app.</p></details>
+      <details class="glass faq-item"><summary>Will anyone know EMALY is involved?</summary><p>No. No badge, no credit, no public disclosure — ever.</p></details>
+      <details class="glass faq-item"><summary>Where can you operate?</summary><p>US company (Wyoming), international payment rails — Stripe, US banking, local methods per market. If your audience can pay, we can build for it.</p></details>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ 13 · FOOTER ============ -->
+<footer class="footer">
+  <div class="container footer-inner">
+    <div class="footer-easteregg" aria-hidden="true">
+      <div class="planet planet-md planet-glow"></div>
+      <span class="easteregg-label">YOU, AFTER LAUNCH 🌍</span>
+    </div>
+    <svg class="footer-logo" viewBox="0 0 160 44" width="160" height="44" aria-label="EMALY logo">
+      <circle cx="22" cy="22" r="14" fill="#1E86E0"/>
+      <path d="M4 29 L40 13" stroke="#F0A93A" stroke-width="3" stroke-linecap="round"/>
+      <text x="22" y="27.5" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="15" fill="#DBE2EC">E</text>
+      <text x="48" y="28.5" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="20" letter-spacing="4" fill="#DBE2EC">EMALY</text>
+    </svg>
+    <p class="footer-line">EMALY GROUP LLC · Wyoming, United States</p>
+    <p class="footer-contact"><a href="mailto:emancaly@icloud.com">emancaly@icloud.com</a></p>
+    <p class="footer-copy">© 2026 EMALY GROUP LLC</p>
+  </div>
+</footer>
+
+<!-- ============ STICKY MOBILE CTA ============ -->
+<div class="sticky-cta" id="stickyCta">
+  <span class="sticky-cta-text">Keep 70% of every sale →</span>
+  <a class="btn btn-primary" href="#preflight">Start Pre-Flight</a>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
