@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EMALY GROUP — Creator Monetization Infrastructure. You Keep 70%.</title>
+<meta name="description" content="We build the entire business behind your name — ebooks, paid communities, branded apps. $0 upfront. You keep 70%. Application-based partnerships only.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A1A3A'/%3E%3Cpath d='M20 16h26l-4 8H30v4h14l-4 8H30v4h18l-4 8H20z' fill='%2339A9F6'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --navy:#0A1A3A;
+  --darkblue:#10275A;
+  --blue:#1E86E0;
+  --sky:#39A9F6;
+  --amber:#F0A93A;
+  --ice:#DBE2EC;
+  --ink:#0E1B33;          /* text on ice */
+  --ink-soft:#3D4C66;     /* secondary text on ice */
+  --white:#F4F8FE;
+  --soft:#B9C6DC;         /* secondary text on navy */
+  --glass:rgba(16,39,90,.5);
+  --glass-border:rgba(57,169,246,.25);
+  --radius:16px;
+  --font-head:'Sora',system-ui,-apple-system,sans-serif;
+  --font-body:'Inter',system-ui,-apple-system,sans-serif;
+  --nav-h:60px;
+  --dur:.25s;
+}
+
+/* ============ RESET / BASE ============ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;overflow-x:clip}
+body{
+  font-family:var(--font-body);
+  font-size:16px;line-height:1.6;
+  background:var(--navy);color:var(--white);
+  overflow-x:hidden;
+  touch-action:manipulation;
+}
+img,svg{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,textarea,select{font:inherit}
+p{max-width:65ch}
+h1,h2,h3{font-family:var(--font-head);line-height:1.2;letter-spacing:-.01em}
+h1{font-size:clamp(36px,4.6vw,58px);font-weight:800}
+h2{font-size:clamp(26px,3.2vw,42px);font-weight:700}
+:focus-visible{outline:3px solid var(--sky);outline-offset:3px;border-radius:4px}
+
+.hl{color:var(--amber)}
+.eyebrow{
+  font-family:var(--font-body);
+  font-size:12px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--amber);margin-bottom:14px;display:block;
+}
+.wrap{width:100%;max-width:1120px;margin-inline:auto;padding-inline:20px}
+section{padding-block:64px;position:relative;overflow:hidden}
+@media(min-width:1024px){section{padding-block:110px}}
+
+/* dark section texture: noise grain */
+.grain::before{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.03;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+/* glow orbs */
+.orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.2;pointer-events:none;z-index:0;
+  animation:drift 30s ease-in-out infinite alternate}
+.orb-blue{background:var(--sky)}
+.orb-amber{background:var(--amber);animation-delay:-15s}
+@keyframes drift{
+  from{transform:translate(0,0) scale(1)}
+  to{transform:translate(60px,-40px) scale(1.15)}
+}
+section>.wrap{position:relative;z-index:1}
+
+/* glass card */
+.glass{
+  background:var(--glass);
+  border:1px solid var(--glass-border);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-radius:var(--radius);
+  transition:transform var(--dur) ease,border-color var(--dur) ease,box-shadow var(--dur) ease;
+}
+.glass:hover{border-color:rgba(57,169,246,.6);transform:translateY(-4px);box-shadow:0 18px 40px rgba(4,10,26,.45)}
+
+/* buttons */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  font-weight:700;font-family:var(--font-body);
+  border-radius:12px;padding:15px 28px;min-height:52px;
+  transition:transform var(--dur) ease,box-shadow var(--dur) ease,background var(--dur) ease,border-color var(--dur) ease;
+  text-align:center;
+}
+.btn:active{transform:scale(.97)}
+.btn-primary{
+  background:linear-gradient(135deg,var(--blue),var(--sky));
+  color:#fff;box-shadow:0 8px 24px rgba(30,134,224,.35);
+}
+.btn-primary:hover{box-shadow:0 12px 32px rgba(57,169,246,.5);transform:translateY(-2px)}
+.btn-ghost{
+  border:1px solid var(--glass-border);color:var(--white);background:rgba(16,39,90,.35);
+}
+.btn-ghost:hover{border-color:var(--sky)}
+.btn-block{width:100%}
+
+/* reveal on scroll */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in{opacity:1;transform:none}
+.reveal.d1{transition-delay:.08s}.reveal.d2{transition-delay:.16s}
+.reveal.d3{transition-delay:.24s}.reveal.d4{transition-delay:.32s}.reveal.d5{transition-delay:.4s}
+
+/* ============ NAV ============ */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav-h);
+  background:rgba(10,26,58,.85);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(57,169,246,.12);
+}
+.nav-inner{
+  max-width:1120px;margin-inline:auto;height:100%;padding-inline:16px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:nowrap;
+}
+.nav-brand{display:flex;align-items:center;gap:10px;min-width:0}
+.nav-logo{height:36px;width:auto}
+.logo-fallback{
+  display:none;width:36px;height:36px;border-radius:9px;flex:none;
+  background:linear-gradient(135deg,var(--blue),var(--sky));
+  align-items:center;justify-content:center;
+  font-family:var(--font-head);font-weight:800;font-size:19px;color:#fff;
+}
+.logo-fallback.show{display:inline-flex}
+.nav-wordmark{
+  display:none;font-family:var(--font-head);font-weight:700;font-size:17px;letter-spacing:.06em;white-space:nowrap;
+}
+.nav-links{display:none;align-items:center;gap:28px;font-weight:600;font-size:15px}
+.nav-links a{color:var(--soft);transition:color var(--dur) ease}
+.nav-links a:hover{color:var(--white)}
+.nav-cta{
+  background:var(--blue);color:#fff;font-weight:700;font-size:15px;
+  height:40px;padding-inline:18px;border-radius:10px;
+  display:inline-flex;align-items:center;white-space:nowrap;flex:none;
+  transition:background var(--dur) ease,transform var(--dur) ease;
+}
+.nav-cta:hover{background:var(--sky);transform:translateY(-1px)}
+.nav-cta .full{display:none}
+@media(min-width:1024px){
+  .nav-wordmark{display:block}
+  .nav-links{display:flex}
+  .nav-cta .full{display:inline}
+  .nav-cta .short{display:none}
+}
+
+/* ============ 1 · HERO ============ */
+.hero{padding-top:calc(var(--nav-h) + 48px);padding-bottom:64px;overflow:hidden}
+.hero-grid{display:grid;gap:48px;align-items:center}
+.hero-copy{text-align:center}
+.hero-copy .eyebrow{text-align:center}
+.hero-sub{color:var(--soft);margin:18px auto 28px;font-size:17px}
+.hero-ctas{display:grid;gap:12px;max-width:420px;margin-inline:auto}
+.trust-strip{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;
+  max-width:460px;margin:28px auto 0;
+}
+.chip{
+  background:var(--glass);border:1px solid var(--glass-border);border-radius:12px;
+  padding:12px 8px;text-align:center;
+}
+.chip b{
+  display:block;font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--amber);
+  font-variant-numeric:tabular-nums;
+}
+.chip span{font-size:12.5px;color:var(--soft);font-weight:500}
+@media(min-width:1024px){
+  .hero{padding-top:calc(var(--nav-h) + 84px)}
+  .hero-grid{grid-template-columns:1.1fr .9fr;gap:56px}
+  .hero-copy{text-align:left}
+  .hero-copy .eyebrow{text-align:left}
+  .hero-sub{margin-inline:0}
+  .hero-ctas{grid-template-columns:auto auto;justify-content:start;margin-inline:0}
+  .trust-strip{grid-template-columns:repeat(4,1fr);max-width:none;margin-inline:0}
+}
+@media(min-width:1024px){.hero-copy h1{text-align:left}}
+
+/* phone mockup */
+.phone-wrap{display:flex;justify-content:center;perspective:1200px}
+.phone{
+  width:272px;height:552px;border-radius:42px;flex:none;
+  background:#050d20;
+  border:1px solid rgba(57,169,246,.35);
+  box-shadow:0 40px 80px rgba(3,8,20,.6),inset 0 0 0 8px #0b1730;
+  transform:rotate(-5deg) rotateY(8deg);
+  position:relative;overflow:hidden;
+}
+.phone::before{ /* notch */
+  content:"";position:absolute;top:14px;left:50%;transform:translateX(-50%);
+  width:88px;height:22px;border-radius:12px;background:#0b1730;z-index:5;
+}
+.screen{position:absolute;inset:8px;border-radius:34px;background:linear-gradient(180deg,#0d2148,#0a1a3a);overflow:hidden;padding:48px 16px 16px}
+.store-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.store-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--sky),var(--blue));flex:none}
+.store-name{font-weight:700;font-size:13.5px}
+.store-tag{font-size:11px;color:var(--soft)}
+.store-card{background:rgba(16,39,90,.7);border:1px solid var(--glass-border);border-radius:12px;padding:12px;margin-bottom:10px}
+.store-cover{height:74px;border-radius:8px;background:linear-gradient(135deg,#123a6e,#1E86E0 65%,#39A9F6);margin-bottom:10px;position:relative}
+.store-cover::after{content:"GUIDE";position:absolute;left:8px;bottom:6px;font-size:9px;letter-spacing:.2em;font-weight:700;color:rgba(255,255,255,.85)}
+.store-row{display:flex;justify-content:space-between;align-items:center;font-size:12.5px}
+.store-price{color:var(--amber);font-weight:800;font-family:var(--font-head)}
+.members-line{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--soft);padding:10px 4px}
+.members-count{font-variant-numeric:tabular-nums;font-weight:800;color:var(--white);font-family:var(--font-head);font-size:15px}
+.week-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(30,160,90,.16);border:1px solid rgba(60,200,120,.45);color:#5fdc95;
+  font-weight:700;font-size:12.5px;border-radius:999px;padding:6px 12px;margin-top:6px;
+}
+.week-pill.pulse{animation:pulse 1s ease}
+@keyframes pulse{0%,100%{transform:scale(1)}30%{transform:scale(1.08);box-shadow:0 0 0 8px rgba(60,200,120,.12)}}
+.sale-toast{
+  position:absolute;left:14px;right:14px;bottom:18px;z-index:6;
+  background:rgba(10,26,58,.95);border:1px solid var(--glass-border);border-radius:12px;
+  padding:10px 12px;display:flex;align-items:center;gap:10px;
+  transform:translateY(140%);transition:transform .5s cubic-bezier(.2,.9,.3,1.1);
+}
+.sale-toast.show{transform:translateY(0)}
+.sale-dot{width:30px;height:30px;border-radius:9px;flex:none;background:linear-gradient(135deg,var(--amber),#f7c56e);display:flex;align-items:center;justify-content:center}
+.sale-dot svg{width:16px;height:16px}
+.sale-txt b{display:block;font-size:12.5px}
+.sale-txt span{font-size:11px;color:var(--soft)}
+
+/* ============ TICKER ============ */
+.ticker{
+  height:48px;overflow:hidden;background:var(--navy);
+  border-top:1px solid rgba(240,169,58,.4);border-bottom:1px solid rgba(240,169,58,.4);
+  display:flex;align-items:center;position:relative;
+}
+.ticker-track{
+  display:flex;gap:0;white-space:nowrap;
+  animation:ticker 28s linear infinite;
+  font-family:var(--font-head);font-weight:700;font-size:13.5px;letter-spacing:.18em;color:var(--amber);
+}
+.ticker-track span{padding-inline:18px}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ============ 2 · ANCHOR BAND ============ */
+.anchor-band{padding-block:56px;text-align:center}
+.anchor-line{font-family:var(--font-head);font-weight:800;font-size:clamp(28px,4.4vw,48px);line-height:1.25}
+.anchor-band .btn{margin-top:24px}
+
+/* ============ 3 · PROBLEM ============ */
+.bg-darkblue{background:var(--darkblue)}
+.bg-ice{background:var(--ice);color:var(--ink)}
+.bg-ice p{color:var(--ink-soft)}
+.problem-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:36px}
+.mini-card{border-radius:var(--radius);padding:18px 14px;position:relative}
+.mini-card h3{font-size:13px;letter-spacing:.12em;margin-bottom:12px}
+.mini-card ul{list-style:none;font-size:13.5px;display:grid;gap:6px}
+.mini-dim{background:rgba(120,132,152,.1);border:1px solid rgba(150,160,180,.25);color:#9aa7bb}
+.mini-dim h3{color:#8b98ad}
+.mini-glow{
+  background:rgba(16,39,90,.55);border:1px solid rgba(240,169,58,.55);
+  box-shadow:0 0 34px rgba(240,169,58,.12);
+}
+.mini-glow h3{color:var(--amber)}
+.mini-card svg{margin-top:14px;width:100%;height:auto}
+.problem-closer{margin-top:28px;font-weight:600;color:var(--white)}
+@media(min-width:1024px){.problem-cards{max-width:720px;gap:20px}.mini-card{padding:26px 22px}}
+
+/* ============ 4 · WHAT WE BUILD ============ */
+.bento{display:grid;gap:16px;margin-top:40px}
+.bento-card{padding:24px;display:flex;flex-direction:column;gap:12px}
+.bento-icon{
+  width:44px;height:44px;border-radius:12px;flex:none;
+  background:rgba(240,169,58,.12);border:1px solid rgba(240,169,58,.35);
+  display:flex;align-items:center;justify-content:center;
+}
+.bento-icon svg{width:22px;height:22px;stroke:var(--amber)}
+.bento-card h3{font-size:19px}
+.bento-card p{color:var(--soft);font-size:15px}
+.bento-wide{border-color:rgba(240,169,58,.5)}
+.micro{margin-top:auto;padding-top:10px}
+/* micro mockups */
+.micro-book{display:flex;align-items:flex-end;gap:10px}
+.micro-book .cover{width:58px;height:76px;border-radius:6px 10px 10px 6px;background:linear-gradient(135deg,#123a6e,var(--blue));border-left:4px solid var(--sky);position:relative}
+.micro-book .tag{background:var(--amber);color:#22160a;font-weight:800;font-size:12px;border-radius:6px;padding:3px 8px;font-family:var(--font-head)}
+.micro-avatars{display:flex;align-items:center}
+.micro-avatars i{width:30px;height:30px;border-radius:50%;border:2px solid var(--darkblue);margin-left:-8px;background:linear-gradient(135deg,var(--sky),var(--blue))}
+.micro-avatars i:first-child{margin-left:0}
+.micro-avatars i:nth-child(2){background:linear-gradient(135deg,#7ec3f5,#2a6fc0)}
+.micro-avatars i:nth-child(3){background:linear-gradient(135deg,#4a90d9,#123a6e)}
+.micro-avatars .mo{
+  margin-left:10px;font-size:10px;font-weight:800;letter-spacing:.14em;color:var(--amber);
+  border:1px solid rgba(240,169,58,.5);border-radius:999px;padding:4px 10px;
+}
+.micro-apps{display:flex;gap:8px}
+.micro-apps i{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--blue),var(--sky))}
+.micro-apps i:nth-child(2){background:linear-gradient(135deg,var(--amber),#f7c56e)}
+.micro-apps i:nth-child(3){background:linear-gradient(135deg,#123a6e,var(--blue))}
+.micro-apps i:nth-child(4){background:rgba(57,169,246,.2);border:1px dashed var(--glass-border)}
+@media(min-width:1024px){
+  .bento{grid-template-columns:1fr 1fr}
+  .bento-wide{grid-column:1/-1;flex-direction:row;align-items:center;justify-content:space-between}
+  .bento-card{padding:32px}
+}
+
+/* ============ 5 · PROCESS ============ */
+.timeline{position:relative;margin-top:44px;padding-left:54px}
+.tl-line{
+  position:absolute;left:21px;top:8px;bottom:8px;width:3px;border-radius:3px;
+  background:rgba(30,134,224,.18);overflow:hidden;
+}
+.tl-line i{
+  position:absolute;left:0;top:0;width:100%;height:0%;
+  background:linear-gradient(180deg,var(--blue),var(--amber));
+  transition:height .2s linear;display:block;
+}
+.tl-step{position:relative;padding-bottom:36px}
+.tl-step:last-child{padding-bottom:0}
+.tl-num{
+  position:absolute;left:-54px;top:0;
+  width:44px;height:44px;border-radius:50%;background:var(--blue);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-head);font-weight:800;font-size:18px;color:var(--amber);
+  box-shadow:0 6px 18px rgba(30,134,224,.35);
+}
+.tl-step h3{font-size:18px;color:var(--ink);margin-bottom:4px}
+.tl-step p{font-size:15px}
+.process-cta{margin-top:44px}
+@media(min-width:1024px){.timeline{max-width:640px}}
+
+/* ============ 6 · THE SPLIT ============ */
+.split-num{
+  font-family:var(--font-head);font-weight:800;font-size:80px;color:var(--amber);
+  line-height:1;font-variant-numeric:tabular-nums;text-align:center;margin-top:28px;
+}
+.split-bar{
+  height:72px;border-radius:14px;overflow:hidden;display:flex;margin-top:20px;
+  border:1px solid var(--glass-border);background:rgba(16,39,90,.4);
+}
+.split-you,.split-us{
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-head);font-weight:800;font-size:11px;letter-spacing:.04em;
+  white-space:nowrap;overflow:hidden;
+  width:0%;transition:width 1.4s cubic-bezier(.25,.8,.25,1);
+}
+@media(min-width:640px){.split-you,.split-us{font-size:14px;letter-spacing:.06em}}
+.split-you{background:linear-gradient(90deg,var(--amber),var(--sky));color:#0a1428}
+.split-us{background:#2c3a55;color:var(--soft)}
+.split-bar.fill .split-you{width:70%}
+.split-bar.fill .split-us{width:30%}
+.split-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px;justify-content:center}
+.split-chips span{
+  display:inline-flex;align-items:center;gap:7px;
+  border:1px solid var(--glass-border);background:var(--glass);border-radius:999px;
+  padding:8px 16px;font-size:14px;font-weight:600;
+}
+.split-chips svg{width:15px;height:15px;stroke:var(--amber);flex:none}
+.split-line{margin:26px auto 0;text-align:center;color:var(--soft)}
+@media(min-width:1024px){.split-wrap{max-width:760px;margin-inline:auto}.split-num{font-size:96px}}
+
+/* ============ 7 · GHOST CLAUSE ============ */
+.ghost-cards{display:grid;gap:14px;margin-top:38px}
+.ghost-card{padding:22px;display:flex;align-items:center;gap:16px}
+.ghost-ava{
+  width:56px;height:56px;border-radius:50%;flex:none;position:relative;
+  background:radial-gradient(circle at 50% 38%,#5b76a8 0 30%,transparent 32%),
+             radial-gradient(circle at 50% 105%,#5b76a8 0 42%,transparent 44%),
+             linear-gradient(135deg,#16305e,#0d2148);
+  filter:blur(1.6px);overflow:hidden;border:1px solid var(--glass-border);
+}
+.ghost-lock{
+  position:absolute;right:-2px;bottom:-2px;width:22px;height:22px;border-radius:50%;
+  background:var(--amber);display:flex;align-items:center;justify-content:center;z-index:2;
+}
+.ghost-lock svg{width:11px;height:11px;stroke:#22160a}
+.ghost-ava-wrap{position:relative;flex:none}
+.ghost-metrics b{display:block;font-family:var(--font-head);font-size:17px}
+.ghost-metrics span{font-size:13.5px;color:var(--soft)}
+.ghost-caption{margin-top:18px;font-size:13.5px;color:var(--soft)}
+.ghost-copy{margin-top:26px;display:grid;gap:14px}
+.ghost-copy p{color:var(--soft)}
+.ghost-copy p b{color:var(--white)}
+@media(min-width:1024px){.ghost-cards{grid-template-columns:repeat(3,1fr)}.ghost-card{flex-direction:column;text-align:center;align-items:center;padding:30px 22px}}
+
+/* ============ 8 · TRACK RECORD ============ */
+.stat-wall{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:40px}
+.stat-cell{
+  background:#fff;border:1px solid rgba(14,27,51,.08);border-radius:var(--radius);
+  padding:22px 16px;text-align:center;box-shadow:0 6px 20px rgba(14,27,51,.06);
+}
+.stat-cell b{
+  display:block;font-family:var(--font-head);font-weight:800;color:var(--amber);
+  font-size:clamp(30px,5vw,44px);font-variant-numeric:tabular-nums;line-height:1.1;
+}
+.stat-cell span{font-size:13.5px;color:var(--ink-soft);font-weight:500;display:block;margin-top:6px}
+@media(min-width:1024px){.stat-wall{gap:20px}.stat-cell{padding:34px 24px}}
+
+/* ============ 9 · COMPARISON ============ */
+.compare-track{
+  display:grid;grid-auto-flow:column;grid-auto-columns:82%;gap:14px;
+  overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 4px 18px;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;margin-top:38px;
+}
+.compare-track::-webkit-scrollbar{display:none}
+.compare-card{scroll-snap-align:center;padding:26px 22px;display:flex;flex-direction:column;gap:10px}
+.compare-card h3{font-size:19px}
+.compare-card .who{font-size:12px;letter-spacing:.12em;font-weight:700;color:var(--soft);text-transform:uppercase}
+.compare-card p{color:var(--soft);font-size:15px}
+.compare-card ul{list-style:none;display:grid;gap:8px;font-size:14.5px;color:var(--soft);margin-top:4px}
+.compare-card li{display:flex;gap:9px;align-items:flex-start}
+.compare-card li svg{width:15px;height:15px;flex:none;margin-top:4px}
+.li-x svg{stroke:#7d8aa3}
+.li-ok svg{stroke:var(--amber)}
+.compare-emaly{
+  border-color:rgba(240,169,58,.6);
+  box-shadow:0 0 44px rgba(240,169,58,.14);
+}
+.compare-tag{
+  align-self:flex-start;font-size:10.5px;font-weight:800;letter-spacing:.16em;
+  color:var(--amber);border:1px solid rgba(240,169,58,.5);border-radius:999px;padding:4px 11px;
+}
+.swipe-hint{margin-top:6px;text-align:center;font-size:12px;color:var(--soft);letter-spacing:.08em}
+@media(min-width:1024px){
+  .compare-track{grid-auto-flow:row;grid-template-columns:repeat(3,1fr);grid-auto-columns:auto;overflow:visible;gap:20px}
+  .swipe-hint{display:none}
+}
+
+/* ============ 10 · HARD LINES ============ */
+.hardlines{list-style:none;margin-top:36px;display:grid;gap:12px}
+.hardlines li{
+  display:flex;align-items:center;gap:14px;
+  background:#fff;border:1px solid rgba(14,27,51,.08);border-radius:12px;
+  padding:16px 18px;font-weight:700;color:var(--ink);font-size:16.5px;
+  box-shadow:0 4px 14px rgba(14,27,51,.05);
+}
+.hardlines .check{
+  width:30px;height:30px;border-radius:50%;flex:none;
+  background:rgba(240,169,58,.15);border:1px solid rgba(240,169,58,.5);
+  display:flex;align-items:center;justify-content:center;
+}
+.hardlines .check svg{width:15px;height:15px;stroke:var(--amber)}
+@media(min-width:1024px){.hardlines{max-width:640px}}
+
+/* ============ 11 · FAQ ============ */
+.faq{margin-top:36px;display:grid;gap:10px}
+.faq-item{border:1px solid var(--glass-border);border-radius:12px;background:rgba(10,26,58,.45);overflow:hidden}
+.faq-q{
+  width:100%;display:flex;justify-content:space-between;align-items:center;gap:14px;
+  padding:17px 18px;text-align:left;font-weight:700;color:var(--white);font-size:15.5px;
+}
+.faq-q svg{width:17px;height:17px;stroke:var(--amber);flex:none;transition:transform var(--dur) ease}
+.faq-item.open .faq-q svg{transform:rotate(180deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.faq-a p{padding:0 18px 17px;color:var(--soft);font-size:15px}
+@media(min-width:1024px){.faq{max-width:760px}}
+
+/* ============ 12 · FINAL CTA / FORM ============ */
+.final-copy{max-width:640px}
+.final-note{margin-top:14px;color:var(--soft)}
+.apply-card{
+  margin-top:40px;padding:28px 20px;max-width:640px;
+  border-top:3px solid var(--amber);
+}
+.apply-card:hover{transform:none}
+.f-grid{display:grid;gap:16px}
+.f-field label{display:block;font-size:13.5px;font-weight:600;margin-bottom:6px;color:var(--white)}
+.f-field label .opt{color:var(--soft);font-weight:500}
+.f-field input,.f-field textarea{
+  width:100%;background:rgba(10,26,58,.6);border:1px solid var(--glass-border);
+  border-radius:10px;color:var(--white);padding:13px 14px;min-height:48px;
+  transition:border-color var(--dur) ease;
+}
+.f-field textarea{min-height:96px;resize:vertical}
+.f-field input:focus,.f-field textarea:focus{outline:none;border-color:var(--sky)}
+.f-field input::placeholder,.f-field textarea::placeholder{color:#5f7093}
+.f-err{display:none;font-size:12.5px;color:#ff9d7a;margin-top:5px}
+.f-field.invalid input,.f-field.invalid textarea{border-color:#e0653a}
+.f-field.invalid .f-err{display:block}
+.apply-privacy{
+  display:flex;align-items:center;gap:8px;justify-content:center;
+  margin-top:16px;font-size:12.5px;color:var(--soft);
+}
+.apply-privacy svg{width:13px;height:13px;stroke:var(--amber);flex:none}
+.apply-success{display:none;text-align:center;padding:34px 10px}
+.apply-success .ok{
+  width:60px;height:60px;border-radius:50%;margin:0 auto 18px;
+  background:rgba(240,169,58,.14);border:1px solid rgba(240,169,58,.55);
+  display:flex;align-items:center;justify-content:center;
+}
+.apply-success .ok svg{width:26px;height:26px;stroke:var(--amber)}
+.apply-success h3{font-size:22px;margin-bottom:8px}
+.apply-success p{color:var(--soft);margin-inline:auto}
+@media(min-width:640px){
+  .f-grid{grid-template-columns:1fr 1fr}
+  .f-span{grid-column:1/-1}
+  .apply-card{padding:36px}
+}
+
+/* ============ FOOTER ============ */
+footer{padding:56px 20px 110px;text-align:center;border-top:1px solid rgba(57,169,246,.12)}
+.foot-logo{height:72px;width:auto;margin:0 auto 18px}
+.foot-fallback{
+  display:none;font-family:var(--font-head);font-weight:800;font-size:24px;letter-spacing:.1em;margin-bottom:18px;
+}
+.foot-fallback.show{display:block}
+.foot-org{font-weight:600}
+.foot-contact{margin-top:8px;font-size:14.5px;color:var(--soft);display:grid;gap:4px}
+.foot-contact a:hover{color:var(--sky)}
+.foot-copy{margin-top:18px;font-size:12.5px;color:#5f7093}
+@media(min-width:1024px){footer{padding-bottom:56px}}
+
+/* ============ STICKY MOBILE CTA ============ */
+.sticky-cta{
+  position:fixed;left:0;right:0;bottom:0;z-index:99;height:56px;
+  background:rgba(10,26,58,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-top:1px solid rgba(240,169,58,.35);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding-inline:16px;padding-bottom:env(safe-area-inset-bottom);
+  transform:translateY(110%);transition:transform .35s ease;
+}
+.sticky-cta.show{transform:translateY(0)}
+.sticky-cta .keep{font-family:var(--font-head);font-weight:700;font-size:14.5px;white-space:nowrap}
+.sticky-cta .keep b{color:var(--amber)}
+.sticky-cta a{
+  background:var(--blue);color:#fff;font-weight:700;font-size:14.5px;
+  border-radius:9px;height:40px;padding-inline:20px;display:inline-flex;align-items:center;flex:none;
+}
+@media(min-width:1024px){.sticky-cta{display:none}}
+
+/* ============ REDUCED MOTION ============ */
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  .reveal{opacity:1;transform:none}
+  .ticker-track{animation:none}
+  .split-bar .split-you{width:70%}
+  .split-bar .split-us{width:30%}
+  .tl-line i{height:100%!important}
+  .phone{transform:rotate(-5deg)}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= NAV ================= -->
+<header class="nav">
+  <div class="nav-inner">
+    <a class="nav-brand" href="#top" aria-label="EMALY GROUP home">
+      <img class="nav-logo" src="assets/logo.png" alt="EMALY GROUP logo"
+           onerror="this.style.display='none';this.nextElementSibling.classList.add('show')">
+      <span class="logo-fallback" aria-hidden="true">E</span>
+      <span class="nav-wordmark">EMALY&nbsp;GROUP</span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#products">Products</a>
+      <a href="#process">Process</a>
+      <a href="#split">The Split</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a class="nav-cta" href="#apply">
+      <span class="short">Apply</span>
+      <span class="full">Apply for Partnership</span>
+    </a>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ================= 1 · HERO ================= -->
+<section class="hero grain" id="hero">
+  <div class="orb orb-blue" style="width:420px;height:420px;top:-120px;left:-140px"></div>
+  <div class="orb orb-amber" style="width:360px;height:360px;bottom:-100px;right:-120px"></div>
+  <div class="wrap">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <span class="eyebrow reveal">EMALY GROUP · Creator Monetization Infrastructure</span>
+        <h1 class="reveal d1">Your audience already trusts you. It's time they bought from you — and you keep <span class="hl">70%</span>.</h1>
+        <p class="hero-sub reveal d2">We build the entire business behind your name — ebooks, communities, apps.<br>You stay the face. We stay invisible.</p>
+        <div class="hero-ctas reveal d3">
+          <a class="btn btn-primary btn-block" href="#apply">Apply for Partnership</a>
+          <a class="btn btn-ghost btn-block" href="#process">See how it works ↓</a>
+        </div>
+        <div class="trust-strip">
+          <div class="chip reveal d2"><b class="count" data-count="3.3" data-decimals="1" data-suffix="M+">3.3M+</b><span>partner audience</span></div>
+          <div class="chip reveal d3"><b class="count" data-count="700" data-suffix="+">700+</b><span>paying members</span></div>
+          <div class="chip reveal d4"><b class="count" data-count="0" data-prefix="$">$0</b><span>upfront cost</span></div>
+          <div class="chip reveal d5"><b class="count" data-count="48" data-suffix="h">48h</b><span>application response</span></div>
+        </div>
+      </div>
+
+      <!-- animated phone mockup -->
+      <div class="phone-wrap reveal d2" aria-hidden="true">
+        <div class="phone">
+          <div class="screen">
+            <div class="store-head">
+              <span class="store-avatar"></span>
+              <div>
+                <div class="store-name">@yourname</div>
+                <div class="store-tag">Creator storefront</div>
+              </div>
+            </div>
+            <div class="store-card">
+              <div class="store-cover"></div>
+              <div class="store-row"><span>The Complete Guide</span><span class="store-price">R249</span></div>
+            </div>
+            <div class="store-card">
+              <div class="store-row"><span>Private Community</span><span class="store-price">R99/mo</span></div>
+              <div class="members-line"><span>Members</span><span class="members-count" id="memberCount">1,239</span></div>
+              <span class="week-pill" id="weekPill">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>
+                +R12,400 this week
+              </span>
+            </div>
+            <div class="sale-toast" id="saleToast">
+              <span class="sale-dot">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#22160a" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>
+              </span>
+              <span class="sale-txt"><b>New sale — R249</b><span>Delivered automatically</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ticker #1 -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track" id="ticker1"></div>
+</div>
+
+<!-- ================= 2 · ANCHOR BAND ================= -->
+<section class="anchor-band grain">
+  <div class="wrap">
+    <p class="anchor-line reveal">You focus on <span class="hl">content</span>. We build the business.</p>
+    <a class="btn btn-ghost reveal d1" href="#apply">Apply for Partnership</a>
+  </div>
+</section>
+
+<!-- ================= 3 · THE PROBLEM ================= -->
+<section class="bg-darkblue grain">
+  <div class="orb orb-blue" style="width:340px;height:340px;top:-80px;right:-100px"></div>
+  <div class="orb orb-amber" style="width:280px;height:280px;bottom:-90px;left:-80px"></div>
+  <div class="wrap">
+    <span class="eyebrow reveal">The math every creator eventually does</span>
+    <h2 class="reveal d1">Sponsorships pay you <span class="hl">once</span>. The brand keeps the customer.</h2>
+    <div class="problem-cards">
+      <div class="mini-card mini-dim reveal d2">
+        <h3>BRAND DEAL</h3>
+        <ul>
+          <li>· paid once</li>
+          <li>· their product</li>
+          <li>· their customer list</li>
+        </ul>
+        <svg viewBox="0 0 120 44" aria-hidden="true"><polyline points="4,24 30,23 58,25 86,23 116,24" fill="none" stroke="#7d8aa3" stroke-width="2.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="mini-card mini-glow reveal d3">
+        <h3>YOUR PRODUCT</h3>
+        <ul>
+          <li>· repeats monthly</li>
+          <li>· your name</li>
+          <li>· your list</li>
+        </ul>
+        <svg viewBox="0 0 120 44" aria-hidden="true"><polyline points="4,38 30,32 58,26 86,16 116,5" fill="none" stroke="#F0A93A" stroke-width="2.5" stroke-linecap="round"/></svg>
+      </div>
+    </div>
+    <p class="problem-closer reveal d4">The only reason most creators haven't switched is the build. That's the part we do.</p>
+  </div>
+</section>
+
+<!-- ================= 4 · WHAT WE BUILD ================= -->
+<section class="grain" id="products">
+  <div class="orb orb-blue" style="width:380px;height:380px;bottom:-120px;left:-120px"></div>
+  <div class="orb orb-amber" style="width:300px;height:300px;top:-60px;right:-90px"></div>
+  <div class="wrap">
+    <span class="eyebrow reveal">The products</span>
+    <h2 class="reveal d1">Built in your voice. <span class="hl">Owned by you.</span></h2>
+    <div class="bento">
+      <div class="glass bento-card reveal d1">
+        <span class="bento-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </span>
+        <h3>Sells 24/7 while you sleep</h3>
+        <p>A real ebook or guide: your ideas, professionally written and designed, delivered automatically the second someone pays.</p>
+        <div class="micro micro-book"><span class="cover"></span><span class="tag">R249</span></div>
+      </div>
+      <div class="glass bento-card reveal d2">
+        <span class="bento-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </span>
+        <h3>Revenue that repeats every month</h3>
+        <p>A private paid community with automated onboarding, billing, and retention running under your brand.</p>
+        <div class="micro micro-avatars"><i></i><i></i><i></i><span class="mo">MONTHLY</span></div>
+      </div>
+      <div class="glass bento-card reveal d3">
+        <span class="bento-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+        </span>
+        <h3>Your name on their home screen</h3>
+        <p>Courses and community inside an app that carries your brand, not a platform's.</p>
+        <div class="micro micro-apps"><i></i><i></i><i></i><i></i></div>
+      </div>
+      <div class="glass bento-card bento-wide reveal d4">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <span class="bento-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </span>
+          <h3>Something else in mind?</h3>
+          <p>Bring the vision. If it monetizes your audience, we'll engineer it.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 5 · HOW IT WORKS ================= -->
+<section class="bg-ice" id="process">
+  <div class="wrap">
+    <span class="eyebrow reveal">The process</span>
+    <h2 class="reveal d1" style="color:var(--ink)">From first call to live product in <span class="hl">1–2 weeks</span>.</h2>
+    <div class="timeline" id="timeline">
+      <div class="tl-line" aria-hidden="true"><i id="tlProgress"></i></div>
+      <div class="tl-step reveal"><span class="tl-num">1</span>
+        <h3>Strategy call — 30 minutes.</h3>
+        <p>We find the product your audience is already asking for. If it's not a fit, we say so.</p>
+      </div>
+      <div class="tl-step reveal d1"><span class="tl-num">2</span>
+        <h3>We build — 1–2 weeks.</h3>
+        <p>Content, design, sales page, payments, delivery. You approve every word.</p>
+      </div>
+      <div class="tl-step reveal d2"><span class="tl-num">3</span>
+        <h3>We hand you the launch.</h3>
+        <p>Word-for-word scripts in your voice, a content calendar, the full marketing plan. You never guess what to say.</p>
+      </div>
+      <div class="tl-step reveal d3"><span class="tl-num">4</span>
+        <h3>You announce. We operate.</h3>
+        <p>Payments, delivery, support — ours from second one. Launch week: a direct line to your build team.</p>
+      </div>
+      <div class="tl-step reveal d4"><span class="tl-num">5</span>
+        <h3>We grow it together.</h3>
+        <p>Sales reporting, then Phase 2: the next product, the premium tier, the app.</p>
+      </div>
+    </div>
+    <div class="process-cta reveal">
+      <a class="btn btn-primary" href="#apply">Apply for Partnership</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 6 · THE SPLIT ================= -->
+<section class="grain" id="split">
+  <div class="orb orb-amber" style="width:360px;height:360px;top:-100px;left:-110px"></div>
+  <div class="orb orb-blue" style="width:320px;height:320px;bottom:-90px;right:-100px"></div>
+  <div class="wrap split-wrap">
+    <span class="eyebrow reveal">Full transparency</span>
+    <h2 class="reveal d1">You keep <span class="hl">70%</span>. We keep 30%. That's the whole deal.</h2>
+    <div class="split-num count reveal d2" data-count="70" data-suffix="%">70%</div>
+    <div class="split-bar reveal d2" id="splitBar" role="img" aria-label="Revenue split bar: you keep 70 percent, EMALY keeps 30 percent">
+      <div class="split-you">YOU — 70%</div>
+      <div class="split-us">EMALY — 30%</div>
+    </div>
+    <div class="split-chips reveal d3">
+      <span><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>$0 setup fees</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>$0 monthly fees</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>We earn only when you earn</span>
+    </div>
+    <p class="split-line reveal d4">Most companies hide their terms until you're on a call. Ours are on the homepage.</p>
+  </div>
+</section>
+
+<!-- ================= 7 · GHOST CLAUSE ================= -->
+<section class="bg-darkblue grain">
+  <div class="orb orb-blue" style="width:340px;height:340px;top:-90px;left:-100px"></div>
+  <div class="orb orb-amber" style="width:260px;height:260px;bottom:-70px;right:-80px"></div>
+  <div class="wrap">
+    <span class="eyebrow reveal">The Ghost Clause</span>
+    <h2 class="reveal d1">To your audience, it's <span class="hl">100% yours</span>. Because it is.</h2>
+    <div class="ghost-cards">
+      <div class="glass ghost-card reveal d1">
+        <span class="ghost-ava-wrap"><span class="ghost-ava"></span><span class="ghost-lock"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span></span>
+        <div class="ghost-metrics"><b>798K audience</b><span>500+ paying members</span></div>
+      </div>
+      <div class="glass ghost-card reveal d2">
+        <span class="ghost-ava-wrap"><span class="ghost-ava"></span><span class="ghost-lock"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span></span>
+        <div class="ghost-metrics"><b>149K audience</b><span>200+ members</span></div>
+      </div>
+      <div class="glass ghost-card reveal d3">
+        <span class="ghost-ava-wrap"><span class="ghost-ava"></span><span class="ghost-lock"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span></span>
+        <div class="ghost-metrics"><b>99.6K audience</b><span>250+ copies sold</span></div>
+      </div>
+    </div>
+    <p class="ghost-caption reveal d4">Partners stay unnamed by design. Verified case studies shared privately, with their permission.</p>
+    <div class="ghost-copy reveal d4">
+      <p>No client names or faces on this page — <b>that's the product working as designed.</b> Your audience sees your book, your community, your app. No "powered by" badge. No trace of us.</p>
+      <p>You did build it: the ideas, the voice, the trust. <b>We're the engineering underneath.</b></p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 8 · TRACK RECORD ================= -->
+<section class="bg-ice">
+  <div class="wrap">
+    <span class="eyebrow reveal">The track record</span>
+    <h2 class="reveal d1" style="color:var(--ink)">Live products. <span class="hl">Real buyers.</span> Quiet partners.</h2>
+    <div class="stat-wall">
+      <div class="stat-cell reveal d1"><b class="count" data-count="3.3" data-decimals="1" data-suffix="M+">3.3M+</b><span>combined partner audience</span></div>
+      <div class="stat-cell reveal d2"><b class="count" data-count="700" data-suffix="+">700+</b><span>paying members today</span></div>
+      <div class="stat-cell reveal d3"><b class="count" data-count="400" data-prefix="1 in ">1 in 400</b><span>followers bought one partner's ebook — 250+ copies from a 99.6K audience</span></div>
+      <div class="stat-cell reveal d4"><b class="count" data-count="100" data-suffix="%">100%</b><span>of delivery, payments and onboarding automated</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 9 · PLATFORMS vs PARTNERS ================= -->
+<section class="grain">
+  <div class="orb orb-blue" style="width:360px;height:360px;top:-100px;right:-110px"></div>
+  <div class="orb orb-amber" style="width:300px;height:300px;bottom:-80px;left:-90px"></div>
+  <div class="wrap">
+    <span class="eyebrow reveal">The honest comparison</span>
+    <h2 class="reveal d1">A platform gives you tools. A partner gives you a <span class="hl">team</span>.</h2>
+    <div class="compare-track reveal d2">
+      <div class="glass compare-card">
+        <span class="who">Platforms — Hotmart, Gumroad, Stan…</span>
+        <h3>~10% for a checkout</h3>
+        <p>~10% or a subscription for checkout and hosting.</p>
+        <ul>
+          <li class="li-x"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>You still write the book, build the funnel, run the launch, answer every customer.</li>
+          <li class="li-x"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>The tools have existed for 15 years. Most creators still never launch — tools were never the bottleneck.</li>
+        </ul>
+      </div>
+      <div class="glass compare-card">
+        <span class="who">Brand deals</span>
+        <h3>Paid once</h3>
+        <p>Their product, their customer list.</p>
+        <ul>
+          <li class="li-x"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>Ends when the deals end.</li>
+        </ul>
+      </div>
+      <div class="glass compare-card compare-emaly">
+        <span class="compare-tag">THE ASSET PLAY</span>
+        <h3>EMALY</h3>
+        <p>30% buys the checkout <b style="color:var(--white)">plus</b> the writing, design, launch scripts, marketing strategy, and daily operations.</p>
+        <ul>
+          <li class="li-ok"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>A full team, paid only when you're paid.</li>
+        </ul>
+      </div>
+    </div>
+    <p class="swipe-hint" aria-hidden="true">← swipe →</p>
+  </div>
+</section>
+
+<!-- ================= 10 · HARD LINES ================= -->
+<section class="bg-ice">
+  <div class="wrap">
+    <span class="eyebrow reveal">Non-negotiables</span>
+    <h2 class="reveal d1" style="color:var(--ink)">Where we draw <span class="hl">hard lines</span>.</h2>
+    <ul class="hardlines">
+      <li class="reveal d1"><span class="check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Never a cent upfront</li>
+      <li class="reveal d2"><span class="check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Never own your brand, content or audience</li>
+      <li class="reveal d3"><span class="check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Never publish without your sign-off</li>
+      <li class="reveal d4"><span class="check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Never reveal the partnership</li>
+      <li class="reveal d5"><span class="check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Never disappear after launch</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= 11 · FAQ ================= -->
+<section class="bg-darkblue grain" id="faq">
+  <div class="orb orb-blue" style="width:320px;height:320px;bottom:-90px;left:-90px"></div>
+  <div class="orb orb-amber" style="width:260px;height:260px;top:-70px;right:-70px"></div>
+  <div class="wrap">
+    <span class="eyebrow reveal">Questions creators actually ask</span>
+    <h2 class="reveal d1">Straight answers, <span class="hl">up front</span>.</h2>
+    <div class="faq reveal d2">
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">What does this cost me?<svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="faq-a"><p>Nothing upfront, nothing monthly. We earn 30% of what the product generates. If it earns zero, we earn zero.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">Hotmart or Gumroad only takes ~10% — why give you 30%?<svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="faq-a"><p>Their ~10% buys a checkout. Our 30% buys the checkout plus the writing, design, sales page, launch scripts, marketing strategy and daily operations — a full team, paid only on results.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">Who owns the product and the content?<svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="faq-a"><p>You do. Your name, your IP, your customer relationships — forever. The revenue share covers our work, not your brand.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">How do influencers actually sell ebooks or courses to their audience?<svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="faq-a"><p>With a real product, a sales page, automated delivery, and a launch plan — the exact system we build. One partner sold 250+ copies to a 99.6K audience.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">I don't have time to write a book or run a community.<svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="faq-a"><p>That's the design. Your input is batched into short sessions; partners typically invest a few hours before launch and zero on operations after.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">What if my audience doesn't buy?<svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="faq-a"><p>You've risked no money, and the launch is scripted to protect your credibility either way. We vet every partnership against live conversion data first, so this stays rare.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">How long until launch?<svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="faq-a"><p>Strategy call, then 1–2 weeks of build, then you announce. Most partners go from first call to first sale within a month.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">Why wouldn't I just build it myself?<svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="faq-a"><p>You can — the tools are cheap. What can't be downloaded is a team that has launched and operated these systems with real audiences, contractually motivated to maximize your revenue.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">I'm not sure what product fits my audience.<svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="faq-a"><p>That's what the strategy call solves. Most partners arrive with an audience and leave with a product, a price, and a launch date.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">Where can you operate?<svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="faq-a"><p>US company (Wyoming) with international payment rails — Stripe, US banking, plus local methods adapted per market. If your audience can pay, we can build for it.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ticker #2 -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track" id="ticker2"></div>
+</div>
+
+<!-- ================= 12 · FINAL CTA ================= -->
+<section class="grain" id="apply">
+  <div class="orb orb-blue" style="width:420px;height:420px;top:-130px;left:-140px"></div>
+  <div class="orb orb-amber" style="width:340px;height:340px;bottom:-100px;right:-110px"></div>
+  <div class="wrap">
+    <div class="final-copy">
+      <h2 class="reveal">The audience is built. The trust is earned. The missing piece is the <span class="hl">product</span> — and that's our job.</h2>
+      <p class="final-note reveal d1">Limited partnerships at a time. If the fit is right, you'll hear from us within 48 hours.</p>
+    </div>
+    <div class="glass apply-card reveal d2">
+      <form id="applyForm" novalidate>
+        <div class="f-grid">
+          <div class="f-field">
+            <label for="fName">Name</label>
+            <input id="fName" name="name" type="text" autocomplete="name" required placeholder="Your name">
+            <span class="f-err">Please enter your name.</span>
+          </div>
+          <div class="f-field">
+            <label for="fHandle">Handle</label>
+            <input id="fHandle" name="handle" type="text" autocomplete="username" required placeholder="@yourhandle">
+            <span class="f-err">Please enter your main handle.</span>
+          </div>
+          <div class="f-field">
+            <label for="fFollowers">Follower count</label>
+            <input id="fFollowers" name="followers" type="text" inputmode="numeric" required placeholder="e.g. 120K">
+            <span class="f-err">Please enter your follower count.</span>
+          </div>
+          <div class="f-field">
+            <label for="fCountry">Country</label>
+            <input id="fCountry" name="country" type="text" autocomplete="country-name" required placeholder="Where you're based">
+            <span class="f-err">Please enter your country.</span>
+          </div>
+          <div class="f-field f-span">
+            <label for="fCreate">What do you create?</label>
+            <input id="fCreate" name="creates" type="text" required placeholder="Fitness, finance, comedy, education…">
+            <span class="f-err">Tell us what you create.</span>
+          </div>
+          <div class="f-field f-span">
+            <label for="fIdea">Anything in mind? <span class="opt">(optional)</span></label>
+            <textarea id="fIdea" name="idea" placeholder="A product idea, a question, anything."></textarea>
+          </div>
+          <div class="f-span">
+            <button class="btn btn-primary btn-block" type="submit" id="applyBtn">Apply for Partnership</button>
+          </div>
+        </div>
+      </form>
+      <div class="apply-success" id="applySuccess" role="status">
+        <span class="ok"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+        <h3>Application received.</h3>
+        <p>We review every application privately. If the fit is right, you'll hear from us within 48 hours.</p>
+      </div>
+      <p class="apply-privacy">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Applications reviewed privately. We never contact you publicly.
+      </p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer class="grain">
+  <img class="foot-logo" src="assets/logo.png" alt="EMALY GROUP logo"
+       onerror="this.style.display='none';this.nextElementSibling.classList.add('show')">
+  <p class="foot-fallback" aria-hidden="true">EMALY <span class="hl">GROUP</span></p>
+  <p class="foot-org">EMALY GROUP LLC · Wyoming, United States</p>
+  <div class="foot-contact">
+    <a href="mailto:main@emalygroup.com">main@emalygroup.com</a>
+    <a href="tel:+258871901400">+258 87 190 1400</a>
+  </div>
+  <p class="foot-copy">© 2026 EMALY GROUP LLC. All rights reserved.</p>
+</footer>
+
+<!-- ================= STICKY MOBILE CTA ================= -->
+<div class="sticky-cta" id="stickyCta">
+  <span class="keep">You keep <b>70%</b> →</span>
+  <a href="#apply">Apply</a>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- tickers ---------- */
+  var tickerText = "EBOOKS ✦ PAID COMMUNITIES ✦ BRANDED APPS ✦ 70/30 SPLIT ✦ $0 UPFRONT ✦ YOU OWN EVERYTHING ✦ ";
+  ["ticker1","ticker2"].forEach(function(id){
+    var el = document.getElementById(id);
+    if(!el) return;
+    var half = "";
+    for(var i=0;i<3;i++) half += "<span>"+tickerText+"</span>";
+    el.innerHTML = half + half; /* duplicate for seamless -50% loop */
+  });
+
+  /* ---------- reveal on scroll ---------- */
+  var revealEls = document.querySelectorAll(".reveal");
+  if(reduced || !("IntersectionObserver" in window)){
+    revealEls.forEach(function(el){ el.classList.add("in"); });
+  }else{
+    var ro = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){ e.target.classList.add("in"); ro.unobserve(e.target); }
+      });
+    },{threshold:.12,rootMargin:"0px 0px -40px 0px"});
+    revealEls.forEach(function(el){ ro.observe(el); });
+  }
+
+  /* ---------- count-up stats ---------- */
+  function renderCount(el, val){
+    var d = parseInt(el.dataset.decimals||"0",10);
+    var n = d ? val.toFixed(d) : Math.round(val).toLocaleString("en-US");
+    el.textContent = (el.dataset.prefix||"") + n + (el.dataset.suffix||"");
+  }
+  function animateCount(el){
+    var target = parseFloat(el.dataset.count||"0");
+    if(reduced || target === 0){ renderCount(el,target); return; }
+    var t0 = null, dur = 1400;
+    function tick(t){
+      if(!t0) t0 = t;
+      var p = Math.min((t-t0)/dur,1);
+      p = 1 - Math.pow(1-p,3); /* ease-out cubic */
+      renderCount(el, target*p);
+      if(p<1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+  var counts = document.querySelectorAll(".count");
+  if("IntersectionObserver" in window && !reduced){
+    var co = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){ animateCount(e.target); co.unobserve(e.target); }
+      });
+    },{threshold:.5});
+    counts.forEach(function(el){ co.observe(el); });
+  }else{
+    counts.forEach(function(el){ renderCount(el, parseFloat(el.dataset.count||"0")); });
+  }
+
+  /* ---------- 70/30 bar ---------- */
+  var bar = document.getElementById("splitBar");
+  if(bar){
+    if(reduced || !("IntersectionObserver" in window)){ bar.classList.add("fill"); }
+    else{
+      var bo = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if(e.isIntersecting){ bar.classList.add("fill"); bo.unobserve(bar); }
+        });
+      },{threshold:.4});
+      bo.observe(bar);
+    }
+  }
+
+  /* ---------- timeline progress line (scroll-linked) ---------- */
+  var tl = document.getElementById("timeline");
+  var tlBar = document.getElementById("tlProgress");
+  if(tl && tlBar && !reduced){
+    var onScroll = function(){
+      var r = tl.getBoundingClientRect();
+      var vh = window.innerHeight;
+      var progress = (vh*0.78 - r.top) / r.height;
+      progress = Math.max(0, Math.min(1, progress));
+      tlBar.style.height = (progress*100)+"%";
+    };
+    window.addEventListener("scroll", onScroll, {passive:true});
+    onScroll();
+  }else if(tlBar){
+    tlBar.style.height = "100%";
+  }
+
+  /* ---------- phone mockup loop ---------- */
+  var toast = document.getElementById("saleToast");
+  var members = document.getElementById("memberCount");
+  var pill = document.getElementById("weekPill");
+  if(toast && members && pill && !reduced){
+    var base = 1239;
+    setInterval(function(){
+      toast.classList.add("show");
+      setTimeout(function(){
+        base += 1;
+        members.textContent = base.toLocaleString("en-US");
+      }, 1600);
+      setTimeout(function(){
+        pill.classList.add("pulse");
+        setTimeout(function(){ pill.classList.remove("pulse"); }, 1100);
+      }, 2400);
+      setTimeout(function(){ toast.classList.remove("show"); }, 3800);
+    }, 6000);
+  }
+
+  /* ---------- sticky mobile CTA ---------- */
+  var sticky = document.getElementById("stickyCta");
+  var hero = document.getElementById("hero");
+  var applySec = document.getElementById("apply");
+  if(sticky && hero && "IntersectionObserver" in window){
+    var heroGone = false, applyVisible = false;
+    function updateSticky(){
+      sticky.classList.toggle("show", heroGone && !applyVisible);
+    }
+    new IntersectionObserver(function(entries){
+      heroGone = !entries[0].isIntersecting; updateSticky();
+    },{threshold:0}).observe(hero);
+    if(applySec){
+      new IntersectionObserver(function(entries){
+        applyVisible = entries[0].isIntersecting; updateSticky();
+      },{threshold:.15}).observe(applySec);
+    }
+  }
+
+  /* ---------- FAQ accordion ---------- */
+  document.querySelectorAll(".faq-item").forEach(function(item){
+    var q = item.querySelector(".faq-q");
+    var a = item.querySelector(".faq-a");
+    q.addEventListener("click", function(){
+      var open = item.classList.contains("open");
+      document.querySelectorAll(".faq-item.open").forEach(function(o){
+        o.classList.remove("open");
+        o.querySelector(".faq-q").setAttribute("aria-expanded","false");
+        o.querySelector(".faq-a").style.maxHeight = "0px";
+      });
+      if(!open){
+        item.classList.add("open");
+        q.setAttribute("aria-expanded","true");
+        a.style.maxHeight = a.scrollHeight + "px";
+      }
+    });
+  });
+
+  /* ---------- application form (front-end only) ---------- */
+  var form = document.getElementById("applyForm");
+  var success = document.getElementById("applySuccess");
+  if(form){
+    form.addEventListener("submit", function(ev){
+      ev.preventDefault();
+      var firstInvalid = null;
+      form.querySelectorAll(".f-field").forEach(function(field){
+        var input = field.querySelector("input,textarea");
+        if(!input) return;
+        var bad = input.hasAttribute("required") && !input.value.trim();
+        field.classList.toggle("invalid", bad);
+        if(bad && !firstInvalid) firstInvalid = input;
+      });
+      if(firstInvalid){ firstInvalid.focus(); return; }
+      form.style.display = "none";
+      success.style.display = "block";
+      success.setAttribute("tabindex","-1");
+      success.focus();
+    });
+    form.querySelectorAll("input,textarea").forEach(function(input){
+      input.addEventListener("blur", function(){
+        if(input.hasAttribute("required")){
+          input.closest(".f-field").classList.toggle("invalid", !input.value.trim());
+        }
+      });
+    });
+  }
+})();
+</script>
+</body>
+</html>
