@@ -9,14 +9,30 @@ one-time purchase, profile editable forever.
 ## Structure
 
 ```
-index.html      # single-page site (hero demo, how it works, features,
+index.html      # landing page (hero demo, how it works, features,
                 #   cards & pricing, testimonials, FAQ, CTA, footer)
+create.html     # build/edit a card profile, get a share link + QR code
+card.html       # displays a card from its link; "Save contact" downloads
+                #   a vCard (.vcf)
 css/style.css   # design tokens + all styling
-js/main.js      # hero card demo, mobile menu, scroll reveals
+js/main.js      # landing page: hero card demo, mobile menu, scroll reveals
+js/app.js       # create/card pages: profile encoding, QR, vCard
 ```
 
 Static site with no build step — open `index.html` in a browser, or serve
 the folder with any static host (GitHub Pages, Netlify, Vercel, etc.).
+
+## How cards work
+
+A card's profile is a small JSON object encoded (base64url) into the URL
+hash of `card.html`. That means:
+
+- No accounts, no database, no server — works on free static hosting.
+- The link *is* the card. Point an NFC tag or the generated QR code at it.
+- Editing opens `create.html` pre-filled and produces a new link, so
+  re-write your NFC tag / QR when you change details.
+- The QR code is drawn client-side (qrcode-generator via jsdelivr CDN);
+  if the CDN is unreachable the QR block hides and the link still works.
 
 ## Design
 
