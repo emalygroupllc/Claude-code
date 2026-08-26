@@ -48,9 +48,8 @@
       <button class="linkish" type="button" id="forgot">Esqueci-me da palavra-passe</button>
 
       <p class="authcard__foot">
-        Ainda não quer criar conta?
-        <a href="create.html">Crie um cartão sem conta</a> — recebe um link de
-        edição que guarda nos favoritos.
+        A conta é grátis e leva menos de um minuto. Serve para guardar os
+        seus cartões e poder editá-los a partir de qualquer telemóvel.
       </p>
     </div>
   </main>
@@ -73,11 +72,22 @@
     var mode = "login";
     var query = new URLSearchParams(location.search);
 
+    // Para onde ir depois de entrar. Só aceita páginas deste site, para
+    // que o parâmetro não possa mandar ninguém para fora.
+    function destination() {
+      var back = query.get("voltar") || "";
+      return /^[a-z0-9._-]+\.html(\?[^#]*)?$/i.test(back) ? back : "painel.html";
+    }
+
     if (!window.FlechaAuth || !FlechaAuth.enabled) {
       errorEl.textContent = "As contas ainda não estão configuradas neste site.";
       errorEl.hidden = false;
       submit.disabled = true;
       return;
+    }
+
+    if (query.get("voltar")) {
+      lead.textContent = "Entre na sua conta para criar e guardar o seu cartão.";
     }
 
     // Veio de um link de recuperação: definir uma palavra-passe nova.
@@ -91,8 +101,8 @@
       submit.textContent = "Guardar palavra-passe";
       mode = "recover";
     } else if (FlechaAuth.isLoggedIn()) {
-      // já autenticado? segue direto para o painel
-      location.replace("painel.html");
+      // já autenticado? segue direto para onde queria ir
+      location.replace(destination());
       return;
     }
 
@@ -178,7 +188,7 @@
 
       if (mode === "login") {
         FlechaAuth.signIn(email, pass).then(function () {
-          location.href = "painel.html";
+          location.href = destination();
         }).catch(function (err) {
           done();
           show(errorEl, friendly(err));
@@ -191,7 +201,7 @@
             setMode("login");
             okEl.hidden = false;
           } else {
-            location.href = "painel.html";
+            location.href = destination();
           }
         }).catch(function (err) {
           done();

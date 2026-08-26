@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Criar o seu cartão — FlechaCard</title>
-  <meta name="description" content="Crie o seu perfil FlechaCard e receba um link partilhável e um código QR em segundos. Grátis, sem conta.">
+  <meta name="description" content="Crie o seu perfil FlechaCard e receba um link partilhável e um código QR em segundos. Grátis com a sua conta.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>➳</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,11 +30,11 @@
 
   <main class="app">
     <div class="app__inner">
-      <p class="eyebrow">Grátis — sem conta</p>
+      <p class="eyebrow">Grátis com a sua conta</p>
       <h1 class="app__title" id="page-title">Criar o seu cartão</h1>
       <p class="app__lead">Preencha o que quer partilhar. Só o nome é
-         obrigatório — o resto é opcional. Não precisa de criar conta: no
-         fim recebe um link permanente e um código QR para partilhar.</p>
+         obrigatório — o resto é opcional. No fim recebe um link permanente
+         e um código QR, e o cartão fica guardado na sua conta.</p>
 
       <form class="form" id="card-form" novalidate>
         <fieldset class="form__group">
@@ -47,7 +47,7 @@
                 <label class="btn btn--outline btn--small" for="f-photo">Escolher foto</label>
                 <input id="f-photo" type="file" accept="image/*" class="visually-hidden">
                 <button class="photo-remove" id="photo-remove" type="button" hidden>Remover foto</button>
-                <p class="photo-note">Opcional. A foto é comprimida e guardada dentro do próprio link.</p>
+                <p class="photo-note">Opcional. A foto é reduzida no seu telemóvel antes de ser guardada.</p>
               </div>
             </div>
           </div>
@@ -142,9 +142,9 @@
           <div class="result__actions">
             <a class="btn btn--outline" id="open-card" href="#" target="_blank" rel="noopener">Abrir o meu cartão</a>
             <a class="btn btn--outline" id="edit-link" href="#">Editar este cartão</a>
-            <p class="result__note">Dica: guarde o link de edição nos
-               favoritos. Como os seus dados vivem no link, editar cria um
-               link novo — atualize o seu cartão NFC ou QR para corresponder.</p>
+            <p class="result__note" id="result-note">Pode voltar a este cartão
+               a partir de <a href="painel.html">Os meus cartões</a> sempre que
+               entrar na sua conta. O link nunca muda, mesmo depois de editar.</p>
           </div>
         </div>
       </section>
@@ -160,9 +160,23 @@
   <script src="js/auth.js"></script>
   <script>
     (function () {
-      if (!window.FlechaAuth || !FlechaAuth.enabled || !FlechaAuth.isLoggedIn()) return;
-      var el = document.getElementById("nav-account");
-      if (el) { el.textContent = "Os meus cartões"; el.href = "painel.html"; }
+      // Criar um cartão exige conta. Quem não tem sessão iniciada vai para
+      // a página de entrada e volta aqui logo a seguir.
+      if (!window.FlechaAuth || !FlechaAuth.enabled) return;
+
+      if (FlechaAuth.isLoggedIn()) {
+        var el = document.getElementById("nav-account");
+        if (el) { el.textContent = "Os meus cartões"; el.href = "painel.html"; }
+        return;
+      }
+
+      // Exceção: os links de edição dos cartões antigos, criados antes de
+      // existirem contas, continuam a abrir sem sessão.
+      var q = new URLSearchParams(location.search);
+      if (q.get("c") && q.get("k")) return;
+
+      var back = location.pathname.split("/").pop() + location.search;
+      location.replace("entrar.html?voltar=" + encodeURIComponent(back));
     })();
   </script>
   <script src="js/app.js"></script>

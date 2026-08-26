@@ -23,9 +23,10 @@ create policy "public read" on public.cards for select using (true);
 revoke all on public.cards from anon, authenticated;
 grant select (slug, data, updated_at) on public.cards to anon, authenticated;
 
--- 1a. Dono do cartão (opcional) -----------------------------------------
--- Quem cria um cartão sem conta continua a poder fazê-lo: nesse caso o
--- dono fica vazio e o cartão só se edita com o link secreto de edição.
+-- 1a. Dono do cartão -----------------------------------------------------
+-- Criar um cartão exige conta, por isso os cartões novos têm sempre dono.
+-- Fica anulável por causa dos cartões antigos, criados antes das contas
+-- existirem: esses continuam a editar-se pelo link secreto de edição.
 alter table public.cards
   add column if not exists owner_id uuid references auth.users(id) on delete set null;
 create index if not exists cards_owner_idx on public.cards (owner_id);
@@ -50,6 +51,8 @@ alter table public.cards add constraint cards_slug_valid check (
 -- desired_slug: o nome escolhido pela pessoa. Se vier vazio, é gerado um
 -- código aleatório. Se já estiver ocupado, a base de dados recusa e o
 -- site mostra a mensagem certa.
+-- Só quem tem sessão iniciada pode criar: sem conta, não é inserida
+-- nenhuma linha e a função devolve nulo.
 drop function if exists public.create_card(jsonb);
 
 create or replace function public.create_card(card_data jsonb, desired_slug text default null)
@@ -59,14 +62,14 @@ security definer
 set search_path = public
 as $$
   insert into public.cards (slug, data, owner_id)
-  values (
+  select
     coalesce(
       nullif(lower(trim(coalesce(desired_slug, ''))), ''),
       substr(replace(gen_random_uuid()::text, '-', ''), 1, 10)
     ),
     card_data,
     auth.uid()
-  )
+  where auth.uid() is not null
   returning json_build_object('slug', slug, 'edit_key', edit_key);
 $$;
 
@@ -153,7 +156,7 @@ $$;
 -- 4. Permissões --------------------------------------------------------
 revoke all on function public.create_card(jsonb, text) from public;
 revoke all on function public.update_card(text, uuid, jsonb) from public;
-grant execute on function public.create_card(jsonb, text) to anon, authenticated;
+grant execute on function public.create_card(jsonb, text) to authenticated;
 revoke all on function public.my_cards() from public;
 revoke all on function public.update_my_card(text, jsonb) from public;
 revoke all on function public.delete_my_card(text) from public;
@@ -162,6 +165,8 @@ grant execute on function public.my_cards() to authenticated;
 grant execute on function public.update_my_card(text, jsonb) to authenticated;
 grant execute on function public.delete_my_card(text) to authenticated;
 grant execute on function public.get_my_card(text) to authenticated;
+-- update_card continua aberto a visitantes: é o que mantém a funcionar os
+-- links de edição dos cartões criados antes de existirem contas.
 grant execute on function public.update_card(text, uuid, jsonb) to anon, authenticated;
 
 -- 5. Avisar a API para recarregar (senão as funções dão erro 404) -------

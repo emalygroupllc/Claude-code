@@ -408,7 +408,11 @@
               return { slug: editSlug, edit_key: null };
             });
         } else {
-          call = API.rpc("create_card", { card_data: obj, desired_slug: wanted || null });
+          call = API.rpc("create_card", { card_data: obj, desired_slug: wanted || null })
+            .then(function (res) {
+              if (!res || !res.slug) throw new Error("need_account");
+              return res;
+            });
         }
         call.then(function (res) {
           submitBtn.disabled = false;
@@ -441,8 +445,12 @@
             if (slugInput) slugInput.focus();
           } else if (code === "api_404") {
             showError("A base de dados ainda não está preparada (erro 404). Falta correr o script de configuração no Supabase.");
-          } else if (code === "api_401" || code === "api_403") {
-            showError("A chave de acesso foi recusada (erro " + code.slice(4) + "). Verifique a chave publicável nas definições do Supabase.");
+          } else if (code === "need_account" || code === "api_401" || code === "api_403") {
+            showError("Precisa de entrar na sua conta para criar um cartão.");
+            setTimeout(function () {
+              var back = location.pathname.split("/").pop() + location.search;
+              location.href = "entrar.html?voltar=" + encodeURIComponent(back);
+            }, 1400);
           } else if (code.indexOf("api_") === 0) {
             showError("O servidor respondeu com um erro " + code.slice(4) + ". Tente novamente dentro de instantes.");
           } else {
