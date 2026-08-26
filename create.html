@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create your card — FlechaCard</title>
+  <meta name="description" content="Build your FlechaCard profile and get a shareable link and QR code in seconds. Free, no account needed.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>➳</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script>document.documentElement.classList.add("js");</script>
+</head>
+<body class="app-page">
+
+  <header class="nav">
+    <div class="nav__inner">
+      <a class="nav__logo" href="index.html" aria-label="FlechaCard home">
+        <span class="nav__glyph" aria-hidden="true">➳</span>FlechaCard
+      </a>
+      <nav class="nav__links" aria-label="Main">
+        <a href="index.html#how">How it works</a>
+        <a href="index.html#cards">Cards</a>
+        <a href="index.html#faq">FAQ</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="app">
+    <div class="app__inner">
+      <p class="eyebrow">Free — no account needed</p>
+      <h1 class="app__title" id="page-title">Create your card</h1>
+      <p class="app__lead">Fill in what you want to share. Only the name is
+         required — everything else is optional. Your details live inside the
+         link itself, so there's nothing to sign up for and no database
+         holding your data.</p>
+
+      <form class="form" id="card-form" novalidate>
+        <fieldset class="form__group">
+          <legend>Who you are</legend>
+          <div class="field field--full">
+            <label for="f-name">Full name <span class="field__req">required</span></label>
+            <input id="f-name" name="n" type="text" autocomplete="name" required placeholder="Ana Ferreira">
+          </div>
+          <div class="field">
+            <label for="f-title">Job title</label>
+            <input id="f-title" name="t" type="text" autocomplete="organization-title" placeholder="Product Designer">
+          </div>
+          <div class="field">
+            <label for="f-company">Company</label>
+            <input id="f-company" name="c" type="text" autocomplete="organization" placeholder="Studio Flecha">
+          </div>
+          <div class="field">
+            <label for="f-location">Location</label>
+            <input id="f-location" name="l" type="text" placeholder="Lisbon, Portugal">
+          </div>
+          <div class="field">
+            <label for="f-bio">One-line bio</label>
+            <input id="f-bio" name="b" type="text" maxlength="120" placeholder="I design products people love to use.">
+          </div>
+        </fieldset>
+
+        <fieldset class="form__group">
+          <legend>How to reach you</legend>
+          <div class="field">
+            <label for="f-phone">Phone</label>
+            <input id="f-phone" name="p" type="tel" autocomplete="tel" placeholder="+351 912 345 678">
+          </div>
+          <div class="field">
+            <label for="f-email">Email</label>
+            <input id="f-email" name="e" type="email" autocomplete="email" placeholder="ana@example.com">
+          </div>
+          <div class="field">
+            <label for="f-whatsapp">WhatsApp number</label>
+            <input id="f-whatsapp" name="wa" type="tel" placeholder="+351 912 345 678">
+          </div>
+          <div class="field">
+            <label for="f-website">Website</label>
+            <input id="f-website" name="w" type="url" inputmode="url" placeholder="https://anaferreira.pt">
+          </div>
+          <div class="field">
+            <label for="f-linkedin">LinkedIn</label>
+            <input id="f-linkedin" name="li" type="text" placeholder="linkedin.com/in/anaferreira">
+          </div>
+          <div class="field">
+            <label for="f-instagram">Instagram</label>
+            <input id="f-instagram" name="ig" type="text" placeholder="@anaferreira">
+          </div>
+        </fieldset>
+
+        <p class="form__error" id="form-error" hidden>Add at least your name to create a card.</p>
+
+        <div class="form__actions">
+          <button class="btn btn--copper" type="submit">Generate my card link <span aria-hidden="true">→</span></button>
+          <a class="btn btn--outline" id="preview-btn" href="#" hidden target="_blank" rel="noopener">Preview my card</a>
+        </div>
+      </form>
+
+      <section class="result" id="result" hidden aria-live="polite">
+        <h2>Your card is ready</h2>
+        <p class="result__hint">This link <em>is</em> your card. Share it, point
+           your NFC card or QR code at it, and keep it safe — to edit later,
+           use the edit link below and generate a new one.</p>
+        <div class="result__linkrow">
+          <input id="result-link" type="text" readonly aria-label="Your card link">
+          <button class="btn btn--copper btn--small" id="copy-btn" type="button">Copy link</button>
+        </div>
+        <div class="result__grid">
+          <div class="result__qr" id="qr-box">
+            <div id="qr" aria-label="QR code for your card link"></div>
+            <p>Scan to open your card — or print this QR on anything.</p>
+          </div>
+          <div class="result__actions">
+            <a class="btn btn--outline" id="open-card" href="#" target="_blank" rel="noopener">Open my card</a>
+            <a class="btn btn--outline" id="edit-link" href="#">Edit this card</a>
+            <p class="result__note">Tip: bookmark the edit link. Because your
+               data lives in the link, editing creates a new link — update
+               your NFC card or QR to match.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer footer--slim">
+    <p class="footer__legal">© <span id="year">2026</span> FlechaCard · <a href="index.html">flechacard home</a></p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
