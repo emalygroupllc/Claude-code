@@ -1,10 +1,49 @@
 // FlechaCard — profile create/edit + card viewer
-// A profile is a small JSON object encoded base64url into the URL hash,
-// so cards work on any static host with no accounts and no database.
+// Two modes:
+//  - Backend mode (Supabase configured in js/config.js): cards live in the
+//    database behind short permanent links (?c=slug); a secret edit key
+//    (?k=...) lets the owner update the card without changing the link.
+//  - Link mode (no backend): the profile is a small JSON object encoded
+//    base64url into the URL hash, so cards work on any static host with
+//    no accounts and no database. Old hash links always keep working.
 (function () {
   "use strict";
 
-  /* ---------- encoding ---------- */
+  /* ---------- backend (optional) ---------- */
+  var CFG = window.FLECHA_CONFIG || {};
+  var API = null;
+  if (CFG.supabaseUrl && CFG.supabaseAnonKey) {
+    var apiBase = CFG.supabaseUrl.replace(/\/+$/, "");
+    var apiHeaders = {
+      "apikey": CFG.supabaseAnonKey,
+      "Authorization": "Bearer " + CFG.supabaseAnonKey,
+      "Content-Type": "application/json"
+    };
+    API = {
+      rpc: function (name, args) {
+        return fetch(apiBase + "/rest/v1/rpc/" + name, {
+          method: "POST",
+          headers: apiHeaders,
+          body: JSON.stringify(args)
+        }).then(function (r) {
+          if (!r.ok) throw new Error("api_" + r.status);
+          return r.json();
+        });
+      },
+      getCard: function (slug) {
+        return fetch(apiBase + "/rest/v1/cards?slug=eq." + encodeURIComponent(slug) + "&select=data", {
+          headers: apiHeaders
+        }).then(function (r) {
+          if (!r.ok) throw new Error("api_" + r.status);
+          return r.json();
+        }).then(function (rows) {
+          return rows && rows[0] ? rows[0].data : null;
+        });
+      }
+    };
+  }
+
+  /* ---------- link-mode encoding ---------- */
   function encodeProfile(obj) {
     var json = JSON.stringify(obj);
     var bytes = new TextEncoder().encode(json);
@@ -27,8 +66,8 @@
     }
   }
 
-  // A card link is "#<profile>[.<photo>]": the photo (already base64 JPEG)
-  // rides as its own base64url segment so it isn't base64-encoded twice.
+  // A link-mode card is "#<profile>[.<photo>]": the photo (already base64
+  // JPEG) rides as its own base64url segment so it isn't encoded twice.
   function encodeCard(obj) {
     var photo = obj.f;
     var rest = {};
@@ -64,6 +103,10 @@
 
   function digits(v) { return (v || "").replace(/[^\d+]/g, ""); }
 
+  function pageBase() {
+    return location.href.split(/[?#]/)[0];
+  }
+
   var year = document.getElementById("year");
   if (year) year.textContent = String(new Date().getFullYear());
 
@@ -75,12 +118,18 @@
     var fields = ["n", "t", "c", "l", "b", "p", "e", "wa", "w", "li", "ig"];
     var errorEl = document.getElementById("form-error");
     var result = document.getElementById("result");
+    var resultHint = document.getElementById("result-hint");
     var linkInput = document.getElementById("result-link");
     var copyBtn = document.getElementById("copy-btn");
     var openCard = document.getElementById("open-card");
     var editLink = document.getElementById("edit-link");
     var qrBox = document.getElementById("qr-box");
     var qrEl = document.getElementById("qr");
+    var submitBtn = form.querySelector('button[type="submit"]');
+
+    var params = new URLSearchParams(location.search);
+    var editSlug = params.get("c");
+    var editKey = params.get("k");
 
     /* ---------- profile photo ---------- */
     var photoData = null; // base64 JPEG, no data: prefix
@@ -116,10 +165,12 @@
       });
     }
 
-    // Center-crop to a square and compress until it fits inside a
-    // shareable URL (small enough that the QR code still generates).
+    // Center-crop to a square and compress. In link mode the photo must
+    // stay small enough for a shareable URL; with a backend the link is
+    // short regardless, so the photo can be bigger and sharper.
     function compressPhoto(source) {
-      var sizes = [112, 96, 80, 64];
+      var sizes = API ? [240, 192, 160, 128] : [112, 96, 80, 64];
+      var budget = API ? 9000 : 2400;
       var qualities = [0.7, 0.55, 0.4];
       var side = Math.min(source.width, source.height);
       var sx = (source.width - side) / 2;
@@ -133,7 +184,7 @@
         for (var j = 0; j < qualities.length; j++) {
           var b64 = canvas.toDataURL("image/jpeg", qualities[j]).split(",")[1];
           if (!best || b64.length < best.length) best = b64;
-          if (b64.length <= 2400) return b64;
+          if (b64.length <= budget) return b64;
         }
       }
       return best;
@@ -158,9 +209,8 @@
       });
     }
 
-    // editing an existing card: prefill from the hash
-    var existing = decodeCard(location.hash.slice(1));
-    if (existing) {
+    /* ---------- prefill when editing ---------- */
+    function prefill(existing) {
       fields.forEach(function (k) {
         var input = form.querySelector('[name="' + k + '"]');
         if (input && existing[k]) input.value = existing[k];
@@ -174,6 +224,15 @@
       document.title = "Editar o seu cartão — FlechaCard";
     }
 
+    if (API && editSlug && editKey) {
+      API.getCard(editSlug).then(function (data) {
+        if (data) prefill(data);
+      }).catch(function () { /* form stays blank; saving will surface errors */ });
+    } else {
+      var existing = decodeCard(location.hash.slice(1));
+      if (existing) prefill(existing);
+    }
+
     function readProfile() {
       var obj = {};
       fields.forEach(function (k) {
@@ -185,57 +244,99 @@
       return obj;
     }
 
-    function cardUrl(obj) {
-      var base = location.href.split(/[?#]/)[0].replace(/create\.html$/, "card.html");
-      return base + "#" + encodeCard(obj);
+    function showError(msg) {
+      if (errorEl) {
+        errorEl.textContent = msg;
+        errorEl.hidden = false;
+      }
+    }
+
+    function renderQr(url) {
+      if (typeof qrcode !== "function" || !qrEl) {
+        if (qrBox) qrBox.hidden = true;
+        return;
+      }
+      var made = false;
+      var levels = ["M", "L"];
+      for (var li = 0; li < levels.length && !made; li++) {
+        try {
+          var qr = qrcode(0, levels[li]);
+          qr.addData(url);
+          qr.make();
+          qrEl.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true });
+          made = true;
+        } catch (err) { /* try the next level */ }
+      }
+      if (made) {
+        qrBox.hidden = false;
+      } else {
+        qrEl.innerHTML = "";
+        qrBox.hidden = false;
+        qrBox.querySelector("p").textContent =
+          "O link com fotografia ficou demasiado longo para um código QR — partilhe o link diretamente, ou remova a foto para gerar o QR.";
+      }
+    }
+
+    function showResult(cardLink, editHref, hint) {
+      linkInput.value = cardLink;
+      openCard.href = cardLink;
+      editLink.href = editHref;
+      if (resultHint && hint) resultHint.textContent = hint;
+      renderQr(cardLink);
+      result.hidden = false;
+      result.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       var obj = readProfile();
       if (!obj.n) {
-        if (errorEl) errorEl.hidden = false;
+        showError("Adicione pelo menos o seu nome para criar o cartão.");
         var nameInput = document.getElementById("f-name");
         if (nameInput) nameInput.focus();
         return;
       }
       if (errorEl) errorEl.hidden = true;
 
-      var url = cardUrl(obj);
-      linkInput.value = url;
-      openCard.href = url;
-      editLink.href = location.href.split(/[?#]/)[0] + "#" + encodeCard(obj);
-      location.hash = encodeCard(obj); // so refresh keeps the draft
+      var base = pageBase();
+      var cardBase = base.replace(/create\.html$/, "card.html");
 
-      // QR (library loads from CDN; hide the block if it didn't).
-      // A photo makes the link long — fall back to error level L, and if
-      // it still doesn't fit in a QR code, say so instead of failing.
-      if (typeof qrcode === "function" && qrEl) {
-        var made = false;
-        var levels = ["M", "L"];
-        for (var li = 0; li < levels.length && !made; li++) {
-          try {
-            var qr = qrcode(0, levels[li]);
-            qr.addData(url);
-            qr.make();
-            qrEl.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true });
-            made = true;
-          } catch (err) { /* try the next level */ }
-        }
-        if (made) {
-          qrBox.hidden = false;
-        } else {
-          qrEl.innerHTML = "";
-          qrBox.hidden = false;
-          qrBox.querySelector("p").textContent =
-            "O link com fotografia ficou demasiado longo para um código QR — partilhe o link diretamente, ou remova a foto para gerar o QR.";
-        }
-      } else if (qrBox) {
-        qrBox.hidden = true;
+      if (API) {
+        submitBtn.disabled = true;
+        var call = (editSlug && editKey)
+          ? API.rpc("update_card", { card_slug: editSlug, key: editKey, card_data: obj })
+              .then(function (ok) {
+                if (ok !== true) throw new Error("bad_key");
+                return { slug: editSlug, edit_key: editKey };
+              })
+          : API.rpc("create_card", { card_data: obj });
+        call.then(function (res) {
+          submitBtn.disabled = false;
+          // remember the edit credentials so a page refresh keeps them
+          editSlug = res.slug;
+          editKey = res.edit_key;
+          var editHref = base + "?c=" + encodeURIComponent(res.slug) + "&k=" + encodeURIComponent(res.edit_key);
+          try { history.replaceState(null, "", editHref); } catch (ignore) {}
+          showResult(
+            cardBase + "?c=" + encodeURIComponent(res.slug),
+            editHref,
+            "Este é o link permanente do seu cartão — curto, e mantém-se igual quando editar. Guarde também o link de edição abaixo: é a sua chave para atualizar o cartão."
+          );
+        }).catch(function (err) {
+          submitBtn.disabled = false;
+          showError(err && err.message === "bad_key"
+            ? "Este link de edição já não é válido. Crie um cartão novo a partir da página inicial."
+            : "Não foi possível guardar o cartão. Verifique a sua ligação à internet e tente novamente.");
+        });
+      } else {
+        var hash = encodeCard(obj);
+        location.hash = hash; // so refresh keeps the draft
+        showResult(
+          cardBase + "#" + hash,
+          base + "#" + hash,
+          "Este link é o seu cartão. Partilhe-o, aponte para ele o seu cartão NFC ou código QR e guarde-o bem — para editar mais tarde, use o link de edição abaixo e gere um novo."
+        );
       }
-
-      result.hidden = false;
-      result.scrollIntoView({ behavior: "smooth", block: "start" });
     });
 
     if (copyBtn) {
@@ -262,11 +363,14 @@
   var profileEl = document.getElementById("profile");
   if (profileEl) {
     var emptyEl = document.getElementById("empty");
-    var data = decodeCard(location.hash.slice(1));
+    var cardParams = new URLSearchParams(location.search);
+    var cardSlug = cardParams.get("c");
 
-    if (!data) {
-      emptyEl.hidden = false;
-    } else {
+    var render = function (data) {
+      if (!data) {
+        emptyEl.hidden = false;
+        return;
+      }
       document.title = data.n + " — FlechaCard";
       var avatar = document.getElementById("p-avatar");
       if (data.f) {
@@ -308,7 +412,9 @@
       if (data.li) addLink("LinkedIn", normalizeUrl(data.li.indexOf("/") === -1 ? "linkedin.com/in/" + data.li : data.li));
       if (data.ig) addLink("Instagram", "https://instagram.com/" + data.ig.replace(/^@/, "").replace(/^.*instagram\.com\//i, "").replace(/\/$/, ""));
 
-      document.getElementById("p-edit").href = "create.html" + location.hash;
+      // owners reach the edit form via their saved edit link; from a public
+      // card the edit page opens blank unless it's a legacy hash link
+      document.getElementById("p-edit").href = "create.html" + (cardSlug ? "" : location.hash);
 
       // vCard download
       document.getElementById("save-contact").addEventListener("click", function () {
@@ -345,6 +451,12 @@
       });
 
       profileEl.hidden = false;
+    };
+
+    if (API && cardSlug) {
+      API.getCard(cardSlug).then(render).catch(function () { render(null); });
+    } else {
+      render(decodeCard(location.hash.slice(1)));
     }
   }
 })();

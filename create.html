@@ -111,9 +111,10 @@
 
       <section class="result" id="result" hidden aria-live="polite">
         <h2>O seu cartão está pronto</h2>
-        <p class="result__hint">Este link <em>é</em> o seu cartão. Partilhe-o,
-           aponte para ele o seu cartão NFC ou código QR e guarde-o bem — para
-           editar mais tarde, use o link de edição abaixo e gere um novo.</p>
+        <p class="result__hint" id="result-hint">Este link <em>é</em> o seu
+           cartão. Partilhe-o, aponte para ele o seu cartão NFC ou código QR e
+           guarde-o bem — para editar mais tarde, use o link de edição abaixo
+           e gere um novo.</p>
         <div class="result__linkrow">
           <input id="result-link" type="text" readonly aria-label="O link do seu cartão">
           <button class="btn btn--copper btn--small" id="copy-btn" type="button">Copiar link</button>
@@ -140,6 +141,7 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+  <script src="js/config.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

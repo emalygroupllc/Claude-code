@@ -22,7 +22,24 @@ js/app.js       # create/card pages: profile encoding, QR, vCard
 Static site with no build step — open `index.html` in a browser, or serve
 the folder with any static host (GitHub Pages, Netlify, Vercel, etc.).
 
-## How cards work
+## Backend mode (Supabase)
+
+With a Supabase project configured, cards are stored in the database
+behind short permanent links (`card.html?c=<slug>`) that never change
+when edited. The secret edit key travels only in the owner's edit link
+(`create.html?c=<slug>&k=<key>`).
+
+Setup:
+1. Run `supabase/setup.sql` in the Supabase dashboard (SQL Editor → Run).
+   It creates the `cards` table plus `create_card`/`update_card`
+   functions; row-level security blocks all direct writes and hides the
+   `edit_key` column from the public.
+2. Put the project URL and anon key in `js/config.js`.
+
+With `js/config.js` left empty the site runs in link-only mode (data
+encoded in the URL), and legacy hash links keep working in both modes.
+
+## How cards work (link mode)
 
 A card's profile is a small JSON object encoded (base64url) into the URL
 hash of `card.html`. An optional profile photo is compressed client-side
