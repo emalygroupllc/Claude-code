@@ -14,11 +14,16 @@
   var API = null;
   if (CFG.supabaseUrl && CFG.supabaseAnonKey) {
     var apiBase = CFG.supabaseUrl.replace(/\/+$/, "");
+    // Publishable keys (sb_publishable_...) are not JWTs: sending them as a
+    // Bearer token makes the gateway reject the request while parsing it.
+    // Only legacy anon keys (eyJ...) belong in the Authorization header.
     var apiHeaders = {
       "apikey": CFG.supabaseAnonKey,
-      "Authorization": "Bearer " + CFG.supabaseAnonKey,
       "Content-Type": "application/json"
     };
+    if (/^eyJ/.test(CFG.supabaseAnonKey)) {
+      apiHeaders.Authorization = "Bearer " + CFG.supabaseAnonKey;
+    }
     API = {
       rpc: function (name, args) {
         return fetch(apiBase + "/rest/v1/rpc/" + name, {
@@ -324,9 +329,18 @@
           );
         }).catch(function (err) {
           submitBtn.disabled = false;
-          showError(err && err.message === "bad_key"
-            ? "Este link de edição já não é válido. Crie um cartão novo a partir da página inicial."
-            : "Não foi possível guardar o cartão. Verifique a sua ligação à internet e tente novamente.");
+          var code = err && err.message ? err.message : "";
+          if (code === "bad_key") {
+            showError("Este link de edição já não é válido. Crie um cartão novo a partir da página inicial.");
+          } else if (code === "api_404") {
+            showError("A base de dados ainda não está preparada (erro 404). Falta correr o script de configuração no Supabase.");
+          } else if (code === "api_401" || code === "api_403") {
+            showError("A chave de acesso foi recusada (erro " + code.slice(4) + "). Verifique a chave publicável nas definições do Supabase.");
+          } else if (code.indexOf("api_") === 0) {
+            showError("O servidor respondeu com um erro " + code.slice(4) + ". Tente novamente dentro de instantes.");
+          } else {
+            showError("Não foi possível contactar o servidor. Verifique a sua ligação à internet e tente novamente.");
+          }
         });
       } else {
         var hash = encodeCard(obj);

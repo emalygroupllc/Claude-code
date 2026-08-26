@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diagnóstico — FlechaCard</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>➳</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script>document.documentElement.classList.add("js");</script>
+</head>
+<body class="app-page">
+
+  <header class="nav">
+    <div class="nav__inner">
+      <a class="nav__logo" href="index.html" aria-label="FlechaCard — início">
+        <span class="nav__glyph" aria-hidden="true">➳</span>FlechaCard
+      </a>
+    </div>
+  </header>
+
+  <main class="app">
+    <div class="app__inner">
+      <p class="eyebrow">Ferramenta técnica</p>
+      <h1 class="app__title">Diagnóstico da ligação</h1>
+      <p class="app__lead">Esta página testa a ligação à base de dados e diz
+         exatamente o que está a funcionar e o que falta configurar.</p>
+
+      <ol class="checks" id="checks"></ol>
+
+      <div class="verdict" id="verdict" hidden></div>
+    </div>
+  </main>
+
+  <footer class="footer footer--slim">
+    <p class="footer__legal">© <span id="year">2026</span> FlechaCard · <a href="index.html">página inicial</a></p>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script>
+  (function () {
+    "use strict";
+    var CFG = window.FLECHA_CONFIG || {};
+    var list = document.getElementById("checks");
+    var verdict = document.getElementById("verdict");
+    document.getElementById("year").textContent = String(new Date().getFullYear());
+
+    function add(label) {
+      var li = document.createElement("li");
+      li.className = "check check--running";
+      li.innerHTML = '<span class="check__dot"></span><div><strong>' + label +
+        '</strong><p class="check__detail">a testar…</p></div>';
+      list.appendChild(li);
+      return {
+        pass: function (msg) {
+          li.className = "check check--pass";
+          li.querySelector(".check__detail").textContent = msg;
+        },
+        fail: function (msg) {
+          li.className = "check check--fail";
+          li.querySelector(".check__detail").textContent = msg;
+        }
+      };
+    }
+
+    function finish(ok, html) {
+      verdict.className = "verdict " + (ok ? "verdict--ok" : "verdict--bad");
+      verdict.innerHTML = html;
+      verdict.hidden = false;
+    }
+
+    var base = (CFG.supabaseUrl || "").replace(/\/+$/, "");
+    var key = CFG.supabaseAnonKey || "";
+    var headers = { "apikey": key, "Content-Type": "application/json" };
+    if (/^eyJ/.test(key)) headers.Authorization = "Bearer " + key;
+
+    // 1. configuration present
+    var c1 = add("Configuração no site");
+    if (!base || !key) {
+      c1.fail("Falta o endereço do projeto ou a chave em js/config.js. O site está a funcionar em modo de link longo.");
+      finish(false, "<p>O site ainda não tem ligação configurada. Os cartões continuam a funcionar com links longos.</p>");
+      return;
+    }
+    var kind = /^eyJ/.test(key) ? "chave antiga (JWT)" : "chave publicável";
+    c1.pass("Endereço: " + base + " · Tipo: " + kind);
+
+    // 2. table reachable
+    var c2 = add("Tabela de cartões no Supabase");
+    fetch(base + "/rest/v1/cards?select=slug&limit=1", { headers: headers })
+      .then(function (r) {
+        if (r.status === 404) throw new Error("no_table");
+        if (r.status === 401 || r.status === 403) throw new Error("auth_" + r.status);
+        if (!r.ok) throw new Error("http_" + r.status);
+        return r.json();
+      })
+      .then(function () {
+        c2.pass("A tabela existe e está acessível.");
+        // 3. create a test card
+        var c3 = add("Criar um cartão de teste");
+        return fetch(base + "/rest/v1/rpc/create_card", {
+          method: "POST",
+          headers: headers,
+          body: JSON.stringify({ card_data: { n: "Teste de diagnóstico" } })
+        }).then(function (r) {
+          if (r.status === 404) throw new Error("no_function");
+          if (!r.ok) throw new Error("http_" + r.status);
+          return r.json();
+        }).then(function (res) {
+          c3.pass("Cartão criado com o código curto: " + res.slug);
+          // 4. read it back
+          var c4 = add("Ler o cartão de volta");
+          return fetch(base + "/rest/v1/cards?slug=eq." + encodeURIComponent(res.slug) + "&select=data", { headers: headers })
+            .then(function (r) { return r.json(); })
+            .then(function (rows) {
+              if (rows && rows[0] && rows[0].data && rows[0].data.n) {
+                c4.pass("Leitura correta: “" + rows[0].data.n + "”.");
+              } else {
+                c4.fail("O cartão foi criado mas não foi possível lê-lo.");
+                throw new Error("read_back");
+              }
+              // 5. edit key is private
+              var c5 = add("Segurança: a chave de edição está protegida");
+              return fetch(base + "/rest/v1/cards?slug=eq." + encodeURIComponent(res.slug) + "&select=edit_key", { headers: headers })
+                .then(function (r) { return r.text(); })
+                .then(function (body) {
+                  if (/[0-9a-f]{8}-[0-9a-f]{4}/.test(body)) {
+                    c5.fail("A chave de edição está visível publicamente. Volte a correr o script de configuração.");
+                    throw new Error("key_exposed");
+                  }
+                  c5.pass("A chave de edição não é legível pelo público, como esperado.");
+                  finish(true,
+                    "<h2>Tudo a funcionar</h2><p>Os cartões novos vão usar links curtos e permanentes. " +
+                    "Pode apagar o cartão de teste no painel do Supabase, em Table Editor → cards.</p>" +
+                    '<p><a class="btn btn--copper" href="create.html">Criar o meu cartão</a></p>');
+                });
+            });
+        });
+      })
+      .catch(function (err) {
+        var m = err && err.message ? err.message : "";
+        if (m === "no_table" || m === "no_function") {
+          if (m === "no_table") c2.fail("A tabela não existe (erro 404).");
+          finish(false,
+            "<h2>Falta preparar a base de dados</h2>" +
+            "<p>O passo em falta é correr o script de configuração:</p><ol>" +
+            '<li>Abra o <a href="https://supabase.com/dashboard/project/cjkigvdsxonvmefqfadq/sql/new" target="_blank" rel="noopener">SQL Editor do Supabase</a>.</li>' +
+            '<li>Cole o conteúdo de <code>supabase/setup.sql</code>.</li>' +
+            "<li>Carregue em <strong>Run</strong> e volte a abrir esta página.</li></ol>");
+        } else if (m.indexOf("auth_") === 0) {
+          c2.fail("A chave foi recusada (erro " + m.slice(5) + ").");
+          finish(false,
+            "<h2>A chave de acesso foi recusada</h2>" +
+            "<p>Confirme nas definições do Supabase que a chave usada é a " +
+            "<strong>publicável / anon</strong> deste projeto.</p>");
+        } else if (m === "key_exposed" || m === "read_back") {
+          finish(false, "<h2>Configuração incompleta</h2><p>Veja o passo marcado a vermelho acima.</p>");
+        } else if (m.indexOf("http_") === 0) {
+          c2.fail("O servidor respondeu com o erro " + m.slice(5) + ".");
+          finish(false, "<h2>Erro do servidor</h2><p>O Supabase respondeu com o código " + m.slice(5) + ".</p>");
+        } else {
+          c2.fail("Não foi possível contactar o servidor.");
+          finish(false,
+            "<h2>Sem ligação ao Supabase</h2>" +
+            "<p>Pode ser falta de internet, ou o projeto pode estar em pausa. " +
+            'Abra o <a href="https://supabase.com/dashboard/project/cjkigvdsxonvmefqfadq" target="_blank" rel="noopener">painel do Supabase</a> ' +
+            "e verifique se o projeto está ativo.</p>");
+        }
+      });
+  })();
+  </script>
+</body>
+</html>

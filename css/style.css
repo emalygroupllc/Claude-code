@@ -921,6 +921,51 @@ a { color: var(--cobalt); }
 .footer--slim .footer__legal { margin: 0 auto; border: none; padding: 0; }
 .footer--slim a { color: var(--mist); }
 
+/* ---------- diagnostics page ---------- */
+.checks { list-style: none; display: grid; gap: 0.75rem; margin-bottom: 2rem; }
+.check {
+  display: flex;
+  gap: 0.9rem;
+  align-items: flex-start;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1rem 1.2rem;
+}
+.check strong { font-family: var(--font-display); color: var(--ink); }
+.check__detail { font-size: 0.9rem; margin-top: 0.15rem; word-break: break-word; }
+.check__dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 0.42rem;
+  background: var(--line);
+}
+.check--running .check__dot { background: var(--copper-hi); }
+.check--pass .check__dot { background: #2E7D5B; }
+.check--pass { border-color: #BEDCCB; }
+.check--fail .check__dot { background: #B3372B; }
+.check--fail { border-color: #E5B4AE; }
+
+.verdict {
+  border-radius: var(--radius);
+  padding: 1.6rem 1.5rem;
+  border: 2px solid var(--line);
+}
+.verdict h2 { font-size: 1.4rem; margin-bottom: 0.6rem; }
+.verdict p, .verdict ol { margin-bottom: 0.8rem; }
+.verdict ol { padding-left: 1.2rem; display: grid; gap: 0.35rem; }
+.verdict code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background: #EDE8DC;
+  padding: 0.1rem 0.35rem;
+  border-radius: 5px;
+}
+.verdict--ok { border-color: #2E7D5B; background: #F1F8F4; }
+.verdict--bad { border-color: var(--copper); background: #FDF4EC; }
+
 /* ---------- card viewer ---------- */
 .app-page--card {
   background: radial-gradient(120% 120% at 80% -10%, var(--ink-soft) 0%, var(--ink) 55%);
