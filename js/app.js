@@ -13,9 +13,9 @@
     return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
   }
 
-  function decodeProfile(hash) {
+  function decodeProfile(part) {
     try {
-      var b64 = hash.replace(/^#/, "").replace(/-/g, "+").replace(/_/g, "/");
+      var b64 = part.replace(/-/g, "+").replace(/_/g, "/");
       while (b64.length % 4) b64 += "=";
       var bin = atob(b64);
       var bytes = new Uint8Array(bin.length);
@@ -25,6 +25,30 @@
     } catch (e) {
       return null;
     }
+  }
+
+  // A card link is "#<profile>[.<photo>]": the photo (already base64 JPEG)
+  // rides as its own base64url segment so it isn't base64-encoded twice.
+  function encodeCard(obj) {
+    var photo = obj.f;
+    var rest = {};
+    for (var k in obj) if (k !== "f") rest[k] = obj[k];
+    var s = encodeProfile(rest);
+    if (photo) {
+      s += "." + photo.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+    }
+    return s;
+  }
+
+  function decodeCard(hash) {
+    var parts = hash.replace(/^#/, "").split(".");
+    var obj = decodeProfile(parts[0]);
+    if (obj && parts[1]) {
+      var f = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+      while (f.length % 4) f += "=";
+      obj.f = f;
+    }
+    return obj;
   }
 
   /* ---------- small helpers ---------- */
@@ -58,13 +82,93 @@
     var qrBox = document.getElementById("qr-box");
     var qrEl = document.getElementById("qr");
 
+    /* ---------- profile photo ---------- */
+    var photoData = null; // base64 JPEG, no data: prefix
+    var photoInput = document.getElementById("f-photo");
+    var photoPreview = document.getElementById("photo-preview");
+    var photoRemove = document.getElementById("photo-remove");
+
+    function showPhotoPreview(b64) {
+      if (b64) {
+        photoPreview.innerHTML = "";
+        var img = document.createElement("img");
+        img.alt = "";
+        img.src = "data:image/jpeg;base64," + b64;
+        photoPreview.appendChild(img);
+        photoRemove.hidden = false;
+      } else {
+        photoPreview.innerHTML = "<span>➳</span>";
+        photoRemove.hidden = true;
+      }
+    }
+
+    function loadImageFile(file) {
+      if (window.createImageBitmap) {
+        // honors EXIF rotation from phone cameras
+        return createImageBitmap(file, { imageOrientation: "from-image" })
+          .catch(function () { return createImageBitmap(file); });
+      }
+      return new Promise(function (resolve, reject) {
+        var img = new Image();
+        img.onload = function () { resolve(img); };
+        img.onerror = reject;
+        img.src = URL.createObjectURL(file);
+      });
+    }
+
+    // Center-crop to a square and compress until it fits inside a
+    // shareable URL (small enough that the QR code still generates).
+    function compressPhoto(source) {
+      var sizes = [112, 96, 80, 64];
+      var qualities = [0.7, 0.55, 0.4];
+      var side = Math.min(source.width, source.height);
+      var sx = (source.width - side) / 2;
+      var sy = (source.height - side) / 2;
+      var canvas = document.createElement("canvas");
+      var best = null;
+      for (var i = 0; i < sizes.length; i++) {
+        canvas.width = canvas.height = sizes[i];
+        var ctx = canvas.getContext("2d");
+        ctx.drawImage(source, sx, sy, side, side, 0, 0, sizes[i], sizes[i]);
+        for (var j = 0; j < qualities.length; j++) {
+          var b64 = canvas.toDataURL("image/jpeg", qualities[j]).split(",")[1];
+          if (!best || b64.length < best.length) best = b64;
+          if (b64.length <= 2400) return b64;
+        }
+      }
+      return best;
+    }
+
+    if (photoInput) {
+      photoInput.addEventListener("change", function () {
+        var file = photoInput.files && photoInput.files[0];
+        if (!file) return;
+        loadImageFile(file).then(function (source) {
+          photoData = compressPhoto(source);
+          showPhotoPreview(photoData);
+        }).catch(function () {
+          photoData = null;
+          showPhotoPreview(null);
+        });
+      });
+      photoRemove.addEventListener("click", function () {
+        photoData = null;
+        photoInput.value = "";
+        showPhotoPreview(null);
+      });
+    }
+
     // editing an existing card: prefill from the hash
-    var existing = decodeProfile(location.hash);
+    var existing = decodeCard(location.hash.slice(1));
     if (existing) {
       fields.forEach(function (k) {
         var input = form.querySelector('[name="' + k + '"]');
         if (input && existing[k]) input.value = existing[k];
       });
+      if (existing.f) {
+        photoData = existing.f;
+        showPhotoPreview(photoData);
+      }
       var title = document.getElementById("page-title");
       if (title) title.textContent = "Editar o seu cartão";
       document.title = "Editar o seu cartão — FlechaCard";
@@ -77,12 +181,13 @@
         var v = input ? input.value.trim() : "";
         if (v) obj[k] = v;
       });
+      if (photoData) obj.f = photoData;
       return obj;
     }
 
     function cardUrl(obj) {
       var base = location.href.split(/[?#]/)[0].replace(/create\.html$/, "card.html");
-      return base + "#" + encodeProfile(obj);
+      return base + "#" + encodeCard(obj);
     }
 
     form.addEventListener("submit", function (e) {
@@ -99,19 +204,31 @@
       var url = cardUrl(obj);
       linkInput.value = url;
       openCard.href = url;
-      editLink.href = location.href.split(/[?#]/)[0] + "#" + encodeProfile(obj);
-      location.hash = encodeProfile(obj); // so refresh keeps the draft
+      editLink.href = location.href.split(/[?#]/)[0] + "#" + encodeCard(obj);
+      location.hash = encodeCard(obj); // so refresh keeps the draft
 
-      // QR (library loads from CDN; hide the block if it didn't)
+      // QR (library loads from CDN; hide the block if it didn't).
+      // A photo makes the link long — fall back to error level L, and if
+      // it still doesn't fit in a QR code, say so instead of failing.
       if (typeof qrcode === "function" && qrEl) {
-        try {
-          var qr = qrcode(0, "M");
-          qr.addData(url);
-          qr.make();
-          qrEl.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true });
+        var made = false;
+        var levels = ["M", "L"];
+        for (var li = 0; li < levels.length && !made; li++) {
+          try {
+            var qr = qrcode(0, levels[li]);
+            qr.addData(url);
+            qr.make();
+            qrEl.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true });
+            made = true;
+          } catch (err) { /* try the next level */ }
+        }
+        if (made) {
           qrBox.hidden = false;
-        } catch (err) {
-          qrBox.hidden = true;
+        } else {
+          qrEl.innerHTML = "";
+          qrBox.hidden = false;
+          qrBox.querySelector("p").textContent =
+            "O link com fotografia ficou demasiado longo para um código QR — partilhe o link diretamente, ou remova a foto para gerar o QR.";
         }
       } else if (qrBox) {
         qrBox.hidden = true;
@@ -145,13 +262,22 @@
   var profileEl = document.getElementById("profile");
   if (profileEl) {
     var emptyEl = document.getElementById("empty");
-    var data = decodeProfile(location.hash);
+    var data = decodeCard(location.hash.slice(1));
 
     if (!data) {
       emptyEl.hidden = false;
     } else {
       document.title = data.n + " — FlechaCard";
-      document.getElementById("p-avatar").textContent = initials(data.n);
+      var avatar = document.getElementById("p-avatar");
+      if (data.f) {
+        var avatarImg = document.createElement("img");
+        avatarImg.alt = "";
+        avatarImg.src = "data:image/jpeg;base64," + data.f;
+        avatar.textContent = "";
+        avatar.appendChild(avatarImg);
+      } else {
+        avatar.textContent = initials(data.n);
+      }
       document.getElementById("p-name").textContent = data.n;
 
       var roleBits = [data.t, data.c].filter(Boolean).join(" · ");
@@ -197,6 +323,16 @@
         if (data.w) lines.push("URL:" + esc(normalizeUrl(data.w)));
         if (data.l) lines.push("ADR;TYPE=WORK:;;;" + esc(data.l) + ";;;");
         if (data.b) lines.push("NOTE:" + esc(data.b));
+        if (data.f) {
+          // vCard 3.0 wants long lines folded: continuation lines start
+          // with a single space
+          var photoLine = "PHOTO;ENCODING=b;TYPE=JPEG:" + data.f;
+          var folded = [];
+          for (var pi = 0; pi < photoLine.length; pi += 74) {
+            folded.push((pi === 0 ? "" : " ") + photoLine.slice(pi, pi + 74));
+          }
+          lines.push(folded.join("\r\n"));
+        }
         lines.push("END:VCARD");
 
         var blob = new Blob([lines.join("\r\n")], { type: "text/vcard;charset=utf-8" });

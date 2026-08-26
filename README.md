@@ -25,7 +25,11 @@ the folder with any static host (GitHub Pages, Netlify, Vercel, etc.).
 ## How cards work
 
 A card's profile is a small JSON object encoded (base64url) into the URL
-hash of `card.html`. That means:
+hash of `card.html`. An optional profile photo is compressed client-side
+(center-cropped square JPEG, ≤ ~1.8 KB) and appended to the hash as its
+own base64url segment (`#<profile>.<photo>`), and it's also embedded in
+the downloaded vCard so the photo lands in the phone's contacts. That
+means:
 
 - No accounts, no database, no server — works on free static hosting.
 - The link *is* the card. Point an NFC tag or the generated QR code at it.

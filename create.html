@@ -39,6 +39,18 @@
       <form class="form" id="card-form" novalidate>
         <fieldset class="form__group">
           <legend>Quem é</legend>
+          <div class="field field--full field--photo">
+            <span class="field__label-text">Fotografia de perfil</span>
+            <div class="photo-row">
+              <div class="photo-preview" id="photo-preview" aria-hidden="true"><span>➳</span></div>
+              <div class="photo-controls">
+                <label class="btn btn--outline btn--small" for="f-photo">Escolher foto</label>
+                <input id="f-photo" type="file" accept="image/*" class="visually-hidden">
+                <button class="photo-remove" id="photo-remove" type="button" hidden>Remover foto</button>
+                <p class="photo-note">Opcional. A foto é comprimida e guardada dentro do próprio link.</p>
+              </div>
+            </div>
+          </div>
           <div class="field field--full">
             <label for="f-name">Nome completo <span class="field__req">obrigatório</span></label>
             <input id="f-name" name="n" type="text" autocomplete="name" required placeholder="Ana Macuácua">
