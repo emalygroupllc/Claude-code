@@ -25,6 +25,7 @@
         <a href="#features">Vantagens</a>
         <a href="#cards">Cartões</a>
         <a href="#faq">Perguntas</a>
+        <a href="entrar.html" id="nav-account">Entrar</a>
       </nav>
       <a class="btn btn--copper btn--small" href="create.html">Criar cartão</a>
       <button class="nav__burger" aria-label="Abrir menu" aria-expanded="false" aria-controls="mobile-menu">
@@ -36,6 +37,7 @@
       <a href="#features">Vantagens</a>
       <a href="#cards">Cartões</a>
       <a href="#faq">Perguntas</a>
+      <a href="entrar.html" id="nav-account-mobile">Entrar</a>
       <a class="btn btn--copper" href="create.html">Criar cartão</a>
     </div>
   </header>
@@ -306,12 +308,24 @@
       <nav class="footer__col" aria-label="Apoio">
         <h3>Apoio</h3>
         <a href="#faq">Perguntas</a>
+        <a href="entrar.html">Entrar / criar conta</a>
         <a href="mailto:hello@flechacard.com">hello@flechacard.com</a>
       </nav>
     </div>
     <p class="footer__legal">© <span id="year">2026</span> FlechaCard, Moçambique. Todos os direitos reservados.</p>
   </footer>
 
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    (function () {
+      if (!window.FlechaAuth || !FlechaAuth.enabled || !FlechaAuth.isLoggedIn()) return;
+      ["nav-account", "nav-account-mobile"].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) { el.textContent = "Os meus cartões"; el.href = "painel.html"; }
+      });
+    })();
+  </script>
   <script src="js/main.js"></script>
 </body>
 </html>

@@ -14,30 +14,40 @@
   var API = null;
   if (CFG.supabaseUrl && CFG.supabaseAnonKey) {
     var apiBase = CFG.supabaseUrl.replace(/\/+$/, "");
+
     // Publishable keys (sb_publishable_...) are not JWTs: sending them as a
     // Bearer token makes the gateway reject the request while parsing it.
     // Only legacy anon keys (eyJ...) belong in the Authorization header.
-    var apiHeaders = {
-      "apikey": CFG.supabaseAnonKey,
-      "Content-Type": "application/json"
-    };
-    if (/^eyJ/.test(CFG.supabaseAnonKey)) {
-      apiHeaders.Authorization = "Bearer " + CFG.supabaseAnonKey;
+    // With a signed-in user, the user's own token is sent instead, which is
+    // what lets the database recognise them as the card's owner.
+    function apiHeaders() {
+      if (window.FlechaAuth && FlechaAuth.enabled) return FlechaAuth.headers();
+      var h = { "apikey": CFG.supabaseAnonKey, "Content-Type": "application/json" };
+      if (/^eyJ/.test(CFG.supabaseAnonKey)) h.Authorization = "Bearer " + CFG.supabaseAnonKey;
+      return Promise.resolve(h);
     }
+
     API = {
+      loggedIn: function () {
+        return !!(window.FlechaAuth && FlechaAuth.enabled && FlechaAuth.isLoggedIn());
+      },
       rpc: function (name, args) {
-        return fetch(apiBase + "/rest/v1/rpc/" + name, {
-          method: "POST",
-          headers: apiHeaders,
-          body: JSON.stringify(args)
+        return apiHeaders().then(function (headers) {
+          return fetch(apiBase + "/rest/v1/rpc/" + name, {
+            method: "POST",
+            headers: headers,
+            body: JSON.stringify(args)
+          });
         }).then(function (r) {
           if (!r.ok) throw new Error("api_" + r.status);
           return r.json();
         });
       },
       getCard: function (slug) {
-        return fetch(apiBase + "/rest/v1/cards?slug=eq." + encodeURIComponent(slug) + "&select=data", {
-          headers: apiHeaders
+        return apiHeaders().then(function (headers) {
+          return fetch(apiBase + "/rest/v1/cards?slug=eq." + encodeURIComponent(slug) + "&select=data", {
+            headers: headers
+          });
         }).then(function (r) {
           if (!r.ok) throw new Error("api_" + r.status);
           return r.json();
@@ -296,7 +306,15 @@
       }
     }
 
-    if (API && editSlug && editKey) {
+    if (API && editSlug && !editKey && API.loggedIn()) {
+      // owner editing from the dashboard
+      API.rpc("get_my_card", { card_slug: editSlug }).then(function (data) {
+        if (data) prefill(data);
+        else showError("Este cartão não está associado à sua conta.");
+      }).catch(function () {
+        showError("Não foi possível carregar este cartão. Recarregue a página.");
+      });
+    } else if (API && editSlug && editKey) {
       API.getCard(editSlug).then(function (data) {
         if (data) prefill(data);
       }).catch(function () { /* form stays blank; saving will surface errors */ });
@@ -376,30 +394,44 @@
       if (API) {
         submitBtn.disabled = true;
         var wanted = slugInput ? cleanSlug(slugInput.value) : "";
-        var call = (editSlug && editKey)
-          ? API.rpc("update_card", { card_slug: editSlug, key: editKey, card_data: obj })
-              .then(function (ok) {
-                if (ok !== true) throw new Error("bad_key");
-                return { slug: editSlug, edit_key: editKey };
-              })
-          : API.rpc("create_card", { card_data: obj, desired_slug: wanted || null });
+        var call;
+        if (editSlug && editKey) {
+          call = API.rpc("update_card", { card_slug: editSlug, key: editKey, card_data: obj })
+            .then(function (ok) {
+              if (ok !== true) throw new Error("bad_key");
+              return { slug: editSlug, edit_key: editKey };
+            });
+        } else if (editSlug && API.loggedIn()) {
+          call = API.rpc("update_my_card", { card_slug: editSlug, card_data: obj })
+            .then(function (ok) {
+              if (ok !== true) throw new Error("not_owner");
+              return { slug: editSlug, edit_key: null };
+            });
+        } else {
+          call = API.rpc("create_card", { card_data: obj, desired_slug: wanted || null });
+        }
         call.then(function (res) {
           submitBtn.disabled = false;
           // remember the edit credentials so a page refresh keeps them
           editSlug = res.slug;
           editKey = res.edit_key;
-          var editHref = base + "?c=" + encodeURIComponent(res.slug) + "&k=" + encodeURIComponent(res.edit_key);
+          var editHref = base + "?c=" + encodeURIComponent(res.slug) +
+            (res.edit_key ? "&k=" + encodeURIComponent(res.edit_key) : "");
           try { history.replaceState(null, "", editHref); } catch (ignore) {}
           showResult(
             publicCardUrl(res.slug),
             editHref,
-            "Este é o link permanente do seu cartão — mantém-se igual sempre que editar. Guarde também o link de edição abaixo: é a sua chave para atualizar o cartão."
+            res.edit_key
+              ? "Este é o link permanente do seu cartão — mantém-se igual sempre que editar. Guarde também o link de edição abaixo: é a sua chave para atualizar o cartão."
+              : "Cartão guardado. O link mantém-se igual, e pode voltar a editá-lo a partir de Os meus cartões sempre que entrar na sua conta."
           );
         }).catch(function (err) {
           submitBtn.disabled = false;
           var code = err && err.message ? err.message : "";
           if (code === "bad_key") {
             showError("Este link de edição já não é válido. Crie um cartão novo a partir da página inicial.");
+          } else if (code === "not_owner") {
+            showError("Este cartão não está associado à sua conta, por isso não pode ser editado aqui.");
           } else if (code === "api_409") {
             showError("O nome “" + wanted + "” já está a ser usado. Escolha outro — por exemplo " +
                       wanted + "-" + Math.floor(Math.random() * 90 + 10) + ".");

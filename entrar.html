@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entrar — FlechaCard</title>
+  <meta name="description" content="Entre na sua conta FlechaCard para gerir os seus cartões digitais.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>➳</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script>document.documentElement.classList.add("js");</script>
+</head>
+<body class="app-page app-page--auth">
+
+  <main class="authview">
+    <div class="authcard">
+      <a class="authcard__logo" href="index.html">
+        <span class="nav__glyph" aria-hidden="true">➳</span> FlechaCard
+      </a>
+
+      <div class="authtabs" role="tablist" aria-label="Entrar ou criar conta">
+        <button class="authtab is-active" id="tab-login" role="tab" aria-selected="true" type="button">Entrar</button>
+        <button class="authtab" id="tab-signup" role="tab" aria-selected="false" type="button">Criar conta</button>
+      </div>
+
+      <p class="authcard__lead" id="auth-lead">
+        Entre para ver e editar os seus cartões em qualquer telemóvel.
+      </p>
+
+      <form id="auth-form" novalidate>
+        <div class="field">
+          <label for="a-email">Email</label>
+          <input id="a-email" type="email" autocomplete="email" required placeholder="ana@exemplo.co.mz">
+        </div>
+        <div class="field">
+          <label for="a-password">Palavra-passe</label>
+          <input id="a-password" type="password" autocomplete="current-password" required placeholder="Pelo menos 8 caracteres">
+        </div>
+
+        <p class="form__error" id="auth-error" hidden></p>
+        <p class="auth-note" id="auth-success" hidden></p>
+
+        <button class="btn btn--copper authcard__submit" type="submit" id="auth-submit">Entrar</button>
+      </form>
+
+      <button class="linkish" type="button" id="forgot">Esqueci-me da palavra-passe</button>
+
+      <p class="authcard__foot">
+        Ainda não quer criar conta?
+        <a href="create.html">Crie um cartão sem conta</a> — recebe um link de
+        edição que guarda nos favoritos.
+      </p>
+    </div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+  (function () {
+    "use strict";
+    var form = document.getElementById("auth-form");
+    var emailEl = document.getElementById("a-email");
+    var passEl = document.getElementById("a-password");
+    var errorEl = document.getElementById("auth-error");
+    var okEl = document.getElementById("auth-success");
+    var submit = document.getElementById("auth-submit");
+    var lead = document.getElementById("auth-lead");
+    var tabLogin = document.getElementById("tab-login");
+    var tabSignup = document.getElementById("tab-signup");
+    var forgot = document.getElementById("forgot");
+    var mode = "login";
+
+    if (!window.FlechaAuth || !FlechaAuth.enabled) {
+      errorEl.textContent = "As contas ainda não estão configuradas neste site.";
+      errorEl.hidden = false;
+      submit.disabled = true;
+      return;
+    }
+
+    // já autenticado? segue direto para o painel
+    if (FlechaAuth.isLoggedIn()) {
+      location.replace("painel.html");
+      return;
+    }
+
+    function show(el, msg) {
+      el.textContent = msg;
+      el.hidden = false;
+    }
+    function clear() {
+      errorEl.hidden = true;
+      okEl.hidden = true;
+    }
+
+    function setMode(next) {
+      mode = next;
+      var login = mode === "login";
+      tabLogin.classList.toggle("is-active", login);
+      tabSignup.classList.toggle("is-active", !login);
+      tabLogin.setAttribute("aria-selected", String(login));
+      tabSignup.setAttribute("aria-selected", String(!login));
+      submit.textContent = login ? "Entrar" : "Criar conta";
+      passEl.autocomplete = login ? "current-password" : "new-password";
+      forgot.hidden = !login;
+      lead.textContent = login
+        ? "Entre para ver e editar os seus cartões em qualquer telemóvel."
+        : "Crie uma conta para guardar os seus cartões e editá-los sem precisar do link secreto.";
+      clear();
+    }
+
+    tabLogin.addEventListener("click", function () { setMode("login"); });
+    tabSignup.addEventListener("click", function () { setMode("signup"); });
+
+    function friendly(err) {
+      var msg = (err && err.message ? err.message : "").toLowerCase();
+      if (msg.indexOf("invalid login") !== -1) return "Email ou palavra-passe errados.";
+      if (msg.indexOf("email not confirmed") !== -1) return "Ainda falta confirmar o email. Verifique a sua caixa de entrada.";
+      if (msg.indexOf("already registered") !== -1 || msg.indexOf("already been registered") !== -1) return "Já existe uma conta com este email. Experimente entrar.";
+      if (msg.indexOf("password") !== -1 && msg.indexOf("least") !== -1) return "A palavra-passe é demasiado curta — use pelo menos 8 caracteres.";
+      if (msg.indexOf("rate limit") !== -1 || (err && err.status === 429)) return "Demasiadas tentativas. Espere um minuto e tente outra vez.";
+      if (msg.indexOf("failed to fetch") !== -1) return "Sem ligação ao servidor. Verifique a internet e tente novamente.";
+      return err && err.message ? err.message : "Não foi possível concluir. Tente novamente.";
+    }
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      clear();
+      var email = emailEl.value.trim();
+      var pass = passEl.value;
+      if (!email || email.indexOf("@") === -1) {
+        show(errorEl, "Escreva um email válido.");
+        emailEl.focus();
+        return;
+      }
+      if (pass.length < 8) {
+        show(errorEl, "A palavra-passe precisa de pelo menos 8 caracteres.");
+        passEl.focus();
+        return;
+      }
+      submit.disabled = true;
+      submit.textContent = mode === "login" ? "A entrar…" : "A criar…";
+
+      var done = function () {
+        submit.disabled = false;
+        submit.textContent = mode === "login" ? "Entrar" : "Criar conta";
+      };
+
+      if (mode === "login") {
+        FlechaAuth.signIn(email, pass).then(function () {
+          location.href = "painel.html";
+        }).catch(function (err) {
+          done();
+          show(errorEl, friendly(err));
+        });
+      } else {
+        FlechaAuth.signUp(email, pass).then(function (res) {
+          if (res.needsConfirmation) {
+            done();
+            show(okEl, "Conta criada. Confirme o email que lhe enviámos e depois entre.");
+            setMode("login");
+            okEl.hidden = false;
+          } else {
+            location.href = "painel.html";
+          }
+        }).catch(function (err) {
+          done();
+          show(errorEl, friendly(err));
+        });
+      }
+    });
+
+    forgot.addEventListener("click", function () {
+      clear();
+      var email = emailEl.value.trim();
+      if (!email || email.indexOf("@") === -1) {
+        show(errorEl, "Escreva primeiro o seu email, depois carregue outra vez.");
+        emailEl.focus();
+        return;
+      }
+      forgot.disabled = true;
+      FlechaAuth.resetPassword(email, location.href.replace(/entrar\.html.*$/, "entrar.html"))
+        .then(function () {
+          forgot.disabled = false;
+          show(okEl, "Se existir uma conta com esse email, enviámos instruções para a recuperar.");
+        })
+        .catch(function (err) {
+          forgot.disabled = false;
+          show(errorEl, friendly(err));
+        });
+    });
+  })();
+  </script>
+</body>
+</html>

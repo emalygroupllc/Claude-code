@@ -23,6 +23,13 @@ create policy "public read" on public.cards for select using (true);
 revoke all on public.cards from anon, authenticated;
 grant select (slug, data, updated_at) on public.cards to anon, authenticated;
 
+-- 1a. Dono do cartão (opcional) -----------------------------------------
+-- Quem cria um cartão sem conta continua a poder fazê-lo: nesse caso o
+-- dono fica vazio e o cartão só se edita com o link secreto de edição.
+alter table public.cards
+  add column if not exists owner_id uuid references auth.users(id) on delete set null;
+create index if not exists cards_owner_idx on public.cards (owner_id);
+
 -- 1b. Regras para o nome do link ---------------------------------------
 -- Só letras minúsculas, números e hífens; nomes do próprio site ficam
 -- reservados para não colidirem com as páginas.
@@ -51,13 +58,14 @@ language sql
 security definer
 set search_path = public
 as $$
-  insert into public.cards (slug, data)
+  insert into public.cards (slug, data, owner_id)
   values (
     coalesce(
       nullif(lower(trim(coalesce(desired_slug, ''))), ''),
       substr(replace(gen_random_uuid()::text, '-', ''), 1, 10)
     ),
-    card_data
+    card_data,
+    auth.uid()
   )
   returning json_build_object('slug', slug, 'edit_key', edit_key);
 $$;
@@ -79,10 +87,81 @@ as $$
   select exists (select 1 from updated);
 $$;
 
+-- 3b. Cartões de quem tem conta ----------------------------------------
+-- Listar os meus cartões.
+create or replace function public.my_cards()
+returns table (slug text, data jsonb, updated_at timestamptz)
+language sql
+security definer
+set search_path = public
+as $$
+  select c.slug, c.data, c.updated_at
+    from public.cards c
+   where c.owner_id = auth.uid()
+     and auth.uid() is not null
+   order by c.updated_at desc;
+$$;
+
+-- Atualizar um cartão meu, sem precisar da chave de edição.
+create or replace function public.update_my_card(card_slug text, card_data jsonb)
+returns boolean
+language sql
+security definer
+set search_path = public
+as $$
+  with updated as (
+    update public.cards
+       set data = card_data, updated_at = now()
+     where slug = card_slug
+       and owner_id = auth.uid()
+       and auth.uid() is not null
+    returning 1
+  )
+  select exists (select 1 from updated);
+$$;
+
+-- Apagar um cartão meu.
+create or replace function public.delete_my_card(card_slug text)
+returns boolean
+language sql
+security definer
+set search_path = public
+as $$
+  with deleted as (
+    delete from public.cards
+     where slug = card_slug
+       and owner_id = auth.uid()
+       and auth.uid() is not null
+    returning 1
+  )
+  select exists (select 1 from deleted);
+$$;
+
+-- Ler um cartão meu para o editar.
+create or replace function public.get_my_card(card_slug text)
+returns jsonb
+language sql
+security definer
+set search_path = public
+as $$
+  select c.data from public.cards c
+   where c.slug = card_slug
+     and c.owner_id = auth.uid()
+     and auth.uid() is not null;
+$$;
+
 -- 4. Permissões --------------------------------------------------------
 revoke all on function public.create_card(jsonb, text) from public;
 revoke all on function public.update_card(text, uuid, jsonb) from public;
 grant execute on function public.create_card(jsonb, text) to anon, authenticated;
+revoke all on function public.my_cards() from public;
+revoke all on function public.update_my_card(text, jsonb) from public;
+revoke all on function public.delete_my_card(text) from public;
+revoke all on function public.get_my_card(text) from public;
+grant execute on function public.my_cards() to authenticated;
+grant execute on function public.update_my_card(text, jsonb) to authenticated;
+grant execute on function public.delete_my_card(text) to authenticated;
+grant execute on function public.get_my_card(text) to authenticated;
 grant execute on function public.update_card(text, uuid, jsonb) to anon, authenticated;
 
 -- 5. Avisar a API para recarregar (senão as funções dão erro 404) -------
@@ -92,5 +171,6 @@ notify pgrst, 'reload schema';
 select routine_name as funcao_criada
   from information_schema.routines
  where routine_schema = 'public'
-   and routine_name in ('create_card', 'update_card')
+   and routine_name in ('create_card', 'update_card', 'my_cards',
+                        'update_my_card', 'delete_my_card', 'get_my_card')
  order by routine_name;

@@ -23,6 +23,7 @@
         <a href="index.html#how">Como funciona</a>
         <a href="index.html#cards">Cartões</a>
         <a href="index.html#faq">Perguntas</a>
+        <a href="entrar.html" id="nav-account">Entrar</a>
       </nav>
     </div>
   </header>
@@ -156,6 +157,14 @@
 
   <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
   <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    (function () {
+      if (!window.FlechaAuth || !FlechaAuth.enabled || !FlechaAuth.isLoggedIn()) return;
+      var el = document.getElementById("nav-account");
+      if (el) { el.textContent = "Os meus cartões"; el.href = "painel.html"; }
+    })();
+  </script>
   <script src="js/app.js"></script>
 </body>
 </html>

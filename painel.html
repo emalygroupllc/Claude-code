@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Os meus cartões — FlechaCard</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>➳</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script>document.documentElement.classList.add("js");</script>
+</head>
+<body class="app-page">
+
+  <header class="nav">
+    <div class="nav__inner">
+      <a class="nav__logo" href="index.html" aria-label="FlechaCard — início">
+        <span class="nav__glyph" aria-hidden="true">➳</span>FlechaCard
+      </a>
+      <nav class="nav__links" aria-label="Principal">
+        <span class="nav__user" id="nav-user"></span>
+        <button class="linkish linkish--light" type="button" id="signout">Sair</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="app">
+    <div class="app__inner">
+      <p class="eyebrow">A sua conta</p>
+      <h1 class="app__title">Os meus cartões</h1>
+      <p class="app__lead">Aqui ficam todos os cartões criados com esta conta.
+         Editar um cartão mantém o mesmo link — quem já o guardou passa a ver
+         os dados novos.</p>
+
+      <p class="loading" id="loading">A carregar os seus cartões…</p>
+
+      <ul class="cardlist" id="cardlist" hidden></ul>
+
+      <div class="emptybox" id="nocards" hidden>
+        <h2>Ainda não tem cartões</h2>
+        <p>Crie o primeiro — leva menos de um minuto.</p>
+        <a class="btn btn--copper" href="create.html">Criar o meu cartão</a>
+      </div>
+
+      <p class="form__error" id="panel-error" hidden></p>
+
+      <p class="panel-actions" id="panel-actions" hidden>
+        <a class="btn btn--outline" href="create.html">Criar outro cartão</a>
+      </p>
+    </div>
+  </main>
+
+  <footer class="footer footer--slim">
+    <p class="footer__legal">© <span id="year">2026</span> FlechaCard · <a href="index.html">página inicial</a></p>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+  (function () {
+    "use strict";
+    var CFG = window.FLECHA_CONFIG || {};
+    var listEl = document.getElementById("cardlist");
+    var loading = document.getElementById("loading");
+    var noCards = document.getElementById("nocards");
+    var errorEl = document.getElementById("panel-error");
+    var actions = document.getElementById("panel-actions");
+    document.getElementById("year").textContent = String(new Date().getFullYear());
+
+    if (!window.FlechaAuth || !FlechaAuth.enabled || !FlechaAuth.isLoggedIn()) {
+      location.replace("entrar.html");
+      return;
+    }
+
+    document.getElementById("nav-user").textContent = FlechaAuth.email() || "";
+    document.getElementById("signout").addEventListener("click", function () {
+      FlechaAuth.signOut().then(function () { location.href = "index.html"; });
+    });
+
+    function siteRoot() {
+      var root = CFG.siteBase || location.href.split(/[?#]/)[0].replace(/[^\/]*$/, "");
+      return root.slice(-1) === "/" ? root : root + "/";
+    }
+
+    function rpc(name, args) {
+      return FlechaAuth.headers().then(function (h) {
+        return fetch(CFG.supabaseUrl.replace(/\/+$/, "") + "/rest/v1/rpc/" + name, {
+          method: "POST", headers: h, body: JSON.stringify(args || {})
+        }).then(function (r) {
+          if (r.status === 401) throw new Error("expired");
+          if (!r.ok) throw new Error("api_" + r.status);
+          return r.json();
+        });
+      });
+    }
+
+    function initials(name) {
+      return (name || "?").trim().split(/\s+/).slice(0, 2)
+        .map(function (w) { return w.charAt(0).toUpperCase(); }).join("");
+    }
+
+    function render(rows) {
+      loading.hidden = true;
+      actions.hidden = false;
+      if (!rows || !rows.length) {
+        noCards.hidden = false;
+        return;
+      }
+      listEl.hidden = false;
+      listEl.innerHTML = "";
+      rows.forEach(function (row) {
+        var d = row.data || {};
+        var url = siteRoot() + encodeURIComponent(row.slug);
+        var li = document.createElement("li");
+        li.className = "cardrow";
+
+        var avatar = document.createElement("div");
+        avatar.className = "cardrow__avatar";
+        if (d.f) {
+          var img = document.createElement("img");
+          img.alt = "";
+          img.src = "data:image/jpeg;base64," + d.f;
+          avatar.appendChild(img);
+        } else {
+          avatar.textContent = initials(d.n);
+        }
+
+        var main = document.createElement("div");
+        main.className = "cardrow__main";
+        var name = document.createElement("strong");
+        name.textContent = d.n || "(sem nome)";
+        var link = document.createElement("a");
+        link.className = "cardrow__link";
+        link.href = url;
+        link.target = "_blank";
+        link.rel = "noopener";
+        link.textContent = url.replace(/^https?:\/\//, "");
+        main.appendChild(name);
+        main.appendChild(link);
+
+        var tools = document.createElement("div");
+        tools.className = "cardrow__tools";
+
+        var edit = document.createElement("a");
+        edit.className = "btn btn--outline btn--small";
+        edit.href = "create.html?c=" + encodeURIComponent(row.slug);
+        edit.textContent = "Editar";
+
+        var copy = document.createElement("button");
+        copy.className = "btn btn--outline btn--small";
+        copy.type = "button";
+        copy.textContent = "Copiar link";
+        copy.addEventListener("click", function () {
+          var done = function () {
+            copy.textContent = "Copiado!";
+            setTimeout(function () { copy.textContent = "Copiar link"; }, 1600);
+          };
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(done, done);
+          } else { done(); }
+        });
+
+        var del = document.createElement("button");
+        del.className = "cardrow__delete";
+        del.type = "button";
+        del.textContent = "Apagar";
+        del.addEventListener("click", function () {
+          if (!confirm("Apagar o cartão de " + (d.n || "sem nome") + "?\n\nO link " +
+                       url.replace(/^https?:\/\//, "") + " deixa de funcionar para quem o guardou.")) return;
+          del.disabled = true;
+          del.textContent = "A apagar…";
+          rpc("delete_my_card", { card_slug: row.slug }).then(function (ok) {
+            if (ok === true) li.remove();
+            else { del.disabled = false; del.textContent = "Apagar"; }
+            if (!listEl.children.length) { listEl.hidden = true; noCards.hidden = false; }
+          }).catch(function () {
+            del.disabled = false;
+            del.textContent = "Apagar";
+            errorEl.textContent = "Não foi possível apagar o cartão. Tente novamente.";
+            errorEl.hidden = false;
+          });
+        });
+
+        tools.appendChild(edit);
+        tools.appendChild(copy);
+        tools.appendChild(del);
+        li.appendChild(avatar);
+        li.appendChild(main);
+        li.appendChild(tools);
+        listEl.appendChild(li);
+      });
+    }
+
+    rpc("my_cards").then(render).catch(function (err) {
+      loading.hidden = true;
+      if (err && err.message === "expired") {
+        FlechaAuth.signOut().then(function () { location.href = "entrar.html"; });
+        return;
+      }
+      errorEl.textContent = "Não foi possível carregar os seus cartões. Verifique a ligação e recarregue a página.";
+      errorEl.hidden = false;
+      actions.hidden = false;
+    });
+  })();
+  </script>
+</body>
+</html>
