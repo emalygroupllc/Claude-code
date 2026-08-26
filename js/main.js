@@ -29,13 +29,13 @@
       var shown = !phone.hidden;
       if (shown) {
         phone.hidden = true;
-        if (caption) caption.textContent = "This is a live demo — tap (or click) the card.";
+        if (caption) caption.textContent = "Isto é uma demonstração — toque (ou clique) no cartão.";
       } else {
         card.classList.remove("is-tapped");
         void card.offsetWidth; // restart the ripple animation
         card.classList.add("is-tapped");
         phone.hidden = false;
-        if (caption) caption.textContent = "Profile shared. Tap again to reset.";
+        if (caption) caption.textContent = "Perfil partilhado. Toque novamente para reiniciar.";
       }
     });
   }
@@ -48,13 +48,13 @@
     burger.addEventListener("click", function () {
       var open = burger.getAttribute("aria-expanded") === "true";
       burger.setAttribute("aria-expanded", String(!open));
-      burger.setAttribute("aria-label", open ? "Open menu" : "Close menu");
+      burger.setAttribute("aria-label", open ? "Abrir menu" : "Fechar menu");
       mobileMenu.hidden = open;
     });
     mobileMenu.addEventListener("click", function (e) {
       if (e.target.closest("a")) {
         burger.setAttribute("aria-expanded", "false");
-        burger.setAttribute("aria-label", "Open menu");
+        burger.setAttribute("aria-label", "Abrir menu");
         mobileMenu.hidden = true;
       }
     });

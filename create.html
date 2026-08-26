@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Create your card — FlechaCard</title>
-  <meta name="description" content="Build your FlechaCard profile and get a shareable link and QR code in seconds. Free, no account needed.">
+  <title>Criar o seu cartão — FlechaCard</title>
+  <meta name="description" content="Crie o seu perfil FlechaCard e receba um link partilhável e um código QR em segundos. Grátis, sem conta.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>➳</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,107 +16,107 @@
 
   <header class="nav">
     <div class="nav__inner">
-      <a class="nav__logo" href="index.html" aria-label="FlechaCard home">
+      <a class="nav__logo" href="index.html" aria-label="FlechaCard — início">
         <span class="nav__glyph" aria-hidden="true">➳</span>FlechaCard
       </a>
-      <nav class="nav__links" aria-label="Main">
-        <a href="index.html#how">How it works</a>
-        <a href="index.html#cards">Cards</a>
-        <a href="index.html#faq">FAQ</a>
+      <nav class="nav__links" aria-label="Principal">
+        <a href="index.html#how">Como funciona</a>
+        <a href="index.html#cards">Cartões</a>
+        <a href="index.html#faq">Perguntas</a>
       </nav>
     </div>
   </header>
 
   <main class="app">
     <div class="app__inner">
-      <p class="eyebrow">Free — no account needed</p>
-      <h1 class="app__title" id="page-title">Create your card</h1>
-      <p class="app__lead">Fill in what you want to share. Only the name is
-         required — everything else is optional. Your details live inside the
-         link itself, so there's nothing to sign up for and no database
-         holding your data.</p>
+      <p class="eyebrow">Grátis — sem conta</p>
+      <h1 class="app__title" id="page-title">Criar o seu cartão</h1>
+      <p class="app__lead">Preencha o que quer partilhar. Só o nome é
+         obrigatório — o resto é opcional. Os seus dados vivem dentro do
+         próprio link, por isso não há registo nem base de dados a guardar a
+         sua informação.</p>
 
       <form class="form" id="card-form" novalidate>
         <fieldset class="form__group">
-          <legend>Who you are</legend>
+          <legend>Quem é</legend>
           <div class="field field--full">
-            <label for="f-name">Full name <span class="field__req">required</span></label>
-            <input id="f-name" name="n" type="text" autocomplete="name" required placeholder="Ana Ferreira">
+            <label for="f-name">Nome completo <span class="field__req">obrigatório</span></label>
+            <input id="f-name" name="n" type="text" autocomplete="name" required placeholder="Ana Macuácua">
           </div>
           <div class="field">
-            <label for="f-title">Job title</label>
-            <input id="f-title" name="t" type="text" autocomplete="organization-title" placeholder="Product Designer">
+            <label for="f-title">Cargo</label>
+            <input id="f-title" name="t" type="text" autocomplete="organization-title" placeholder="Designer de Produto">
           </div>
           <div class="field">
-            <label for="f-company">Company</label>
+            <label for="f-company">Empresa</label>
             <input id="f-company" name="c" type="text" autocomplete="organization" placeholder="Studio Flecha">
           </div>
           <div class="field">
-            <label for="f-location">Location</label>
-            <input id="f-location" name="l" type="text" placeholder="Lisbon, Portugal">
+            <label for="f-location">Localização</label>
+            <input id="f-location" name="l" type="text" placeholder="Maputo, Moçambique">
           </div>
           <div class="field">
-            <label for="f-bio">One-line bio</label>
-            <input id="f-bio" name="b" type="text" maxlength="120" placeholder="I design products people love to use.">
+            <label for="f-bio">Bio numa linha</label>
+            <input id="f-bio" name="b" type="text" maxlength="120" placeholder="Crio produtos que as pessoas adoram usar.">
           </div>
         </fieldset>
 
         <fieldset class="form__group">
-          <legend>How to reach you</legend>
+          <legend>Como o contactar</legend>
           <div class="field">
-            <label for="f-phone">Phone</label>
-            <input id="f-phone" name="p" type="tel" autocomplete="tel" placeholder="+351 912 345 678">
+            <label for="f-phone">Telefone</label>
+            <input id="f-phone" name="p" type="tel" autocomplete="tel" placeholder="+258 84 123 4567">
           </div>
           <div class="field">
             <label for="f-email">Email</label>
-            <input id="f-email" name="e" type="email" autocomplete="email" placeholder="ana@example.com">
+            <input id="f-email" name="e" type="email" autocomplete="email" placeholder="ana@exemplo.co.mz">
           </div>
           <div class="field">
-            <label for="f-whatsapp">WhatsApp number</label>
-            <input id="f-whatsapp" name="wa" type="tel" placeholder="+351 912 345 678">
+            <label for="f-whatsapp">Número de WhatsApp</label>
+            <input id="f-whatsapp" name="wa" type="tel" placeholder="+258 84 123 4567">
           </div>
           <div class="field">
-            <label for="f-website">Website</label>
-            <input id="f-website" name="w" type="url" inputmode="url" placeholder="https://anaferreira.pt">
+            <label for="f-website">Site</label>
+            <input id="f-website" name="w" type="url" inputmode="url" placeholder="https://oseusite.co.mz">
           </div>
           <div class="field">
             <label for="f-linkedin">LinkedIn</label>
-            <input id="f-linkedin" name="li" type="text" placeholder="linkedin.com/in/anaferreira">
+            <input id="f-linkedin" name="li" type="text" placeholder="linkedin.com/in/anamacuacua">
           </div>
           <div class="field">
             <label for="f-instagram">Instagram</label>
-            <input id="f-instagram" name="ig" type="text" placeholder="@anaferreira">
+            <input id="f-instagram" name="ig" type="text" placeholder="@anamacuacua">
           </div>
         </fieldset>
 
-        <p class="form__error" id="form-error" hidden>Add at least your name to create a card.</p>
+        <p class="form__error" id="form-error" hidden>Adicione pelo menos o seu nome para criar o cartão.</p>
 
         <div class="form__actions">
-          <button class="btn btn--copper" type="submit">Generate my card link <span aria-hidden="true">→</span></button>
-          <a class="btn btn--outline" id="preview-btn" href="#" hidden target="_blank" rel="noopener">Preview my card</a>
+          <button class="btn btn--copper" type="submit">Gerar o link do meu cartão <span aria-hidden="true">→</span></button>
+          <a class="btn btn--outline" id="preview-btn" href="#" hidden target="_blank" rel="noopener">Pré-visualizar o meu cartão</a>
         </div>
       </form>
 
       <section class="result" id="result" hidden aria-live="polite">
-        <h2>Your card is ready</h2>
-        <p class="result__hint">This link <em>is</em> your card. Share it, point
-           your NFC card or QR code at it, and keep it safe — to edit later,
-           use the edit link below and generate a new one.</p>
+        <h2>O seu cartão está pronto</h2>
+        <p class="result__hint">Este link <em>é</em> o seu cartão. Partilhe-o,
+           aponte para ele o seu cartão NFC ou código QR e guarde-o bem — para
+           editar mais tarde, use o link de edição abaixo e gere um novo.</p>
         <div class="result__linkrow">
-          <input id="result-link" type="text" readonly aria-label="Your card link">
-          <button class="btn btn--copper btn--small" id="copy-btn" type="button">Copy link</button>
+          <input id="result-link" type="text" readonly aria-label="O link do seu cartão">
+          <button class="btn btn--copper btn--small" id="copy-btn" type="button">Copiar link</button>
         </div>
         <div class="result__grid">
           <div class="result__qr" id="qr-box">
-            <div id="qr" aria-label="QR code for your card link"></div>
-            <p>Scan to open your card — or print this QR on anything.</p>
+            <div id="qr" aria-label="Código QR do link do seu cartão"></div>
+            <p>Digitalize para abrir o seu cartão — ou imprima este QR onde quiser.</p>
           </div>
           <div class="result__actions">
-            <a class="btn btn--outline" id="open-card" href="#" target="_blank" rel="noopener">Open my card</a>
-            <a class="btn btn--outline" id="edit-link" href="#">Edit this card</a>
-            <p class="result__note">Tip: bookmark the edit link. Because your
-               data lives in the link, editing creates a new link — update
-               your NFC card or QR to match.</p>
+            <a class="btn btn--outline" id="open-card" href="#" target="_blank" rel="noopener">Abrir o meu cartão</a>
+            <a class="btn btn--outline" id="edit-link" href="#">Editar este cartão</a>
+            <p class="result__note">Dica: guarde o link de edição nos
+               favoritos. Como os seus dados vivem no link, editar cria um
+               link novo — atualize o seu cartão NFC ou QR para corresponder.</p>
           </div>
         </div>
       </section>
@@ -124,7 +124,7 @@
   </main>
 
   <footer class="footer footer--slim">
-    <p class="footer__legal">© <span id="year">2026</span> FlechaCard · <a href="index.html">flechacard home</a></p>
+    <p class="footer__legal">© <span id="year">2026</span> FlechaCard · <a href="index.html">página inicial</a></p>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>

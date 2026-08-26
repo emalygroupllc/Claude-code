@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FlechaCard — One tap. Straight to you.</title>
-  <meta name="description" content="FlechaCard is the NFC business card that shares your contact, links and portfolio with a single tap. No app needed. One card, updated forever.">
+  <title>FlechaCard — Um toque. Direto até si.</title>
+  <meta name="description" content="FlechaCard é o cartão de visita NFC que partilha os seus contactos, links e portfólio com um único toque. Sem app. Um cartão, atualizado para sempre.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>➳</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,26 +17,26 @@
   <!-- ======================= NAV ======================= -->
   <header class="nav" id="top">
     <div class="nav__inner">
-      <a class="nav__logo" href="#top" aria-label="FlechaCard home">
+      <a class="nav__logo" href="#top" aria-label="FlechaCard — início">
         <span class="nav__glyph" aria-hidden="true">➳</span>FlechaCard
       </a>
-      <nav class="nav__links" aria-label="Main">
-        <a href="#how">How it works</a>
-        <a href="#features">Features</a>
-        <a href="#cards">Cards</a>
-        <a href="#faq">FAQ</a>
+      <nav class="nav__links" aria-label="Principal">
+        <a href="#how">Como funciona</a>
+        <a href="#features">Vantagens</a>
+        <a href="#cards">Cartões</a>
+        <a href="#faq">Perguntas</a>
       </nav>
-      <a class="btn btn--copper btn--small" href="create.html">Create your card</a>
-      <button class="nav__burger" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+      <a class="btn btn--copper btn--small" href="create.html">Criar cartão</a>
+      <button class="nav__burger" aria-label="Abrir menu" aria-expanded="false" aria-controls="mobile-menu">
         <span></span><span></span>
       </button>
     </div>
     <div class="nav__mobile" id="mobile-menu" hidden>
-      <a href="#how">How it works</a>
-      <a href="#features">Features</a>
-      <a href="#cards">Cards</a>
-      <a href="#faq">FAQ</a>
-      <a class="btn btn--copper" href="create.html">Create your card</a>
+      <a href="#how">Como funciona</a>
+      <a href="#features">Vantagens</a>
+      <a href="#cards">Cartões</a>
+      <a href="#faq">Perguntas</a>
+      <a class="btn btn--copper" href="create.html">Criar cartão</a>
     </div>
   </header>
 
@@ -46,261 +46,270 @@
       <div class="hero__coil" aria-hidden="true"></div>
       <div class="hero__inner">
         <div class="hero__copy">
-          <p class="eyebrow eyebrow--light">The NFC business card</p>
+          <p class="eyebrow eyebrow--light">O cartão de visita NFC</p>
           <h1 class="hero__title">
-            One tap.<br>
-            <span class="hero__title-accent">Straight to you.</span>
+            Um toque.<br>
+            <span class="hero__title-accent">Direto até si.</span>
           </h1>
           <p class="hero__lead">
-            FlechaCard puts your contact, links and work on any phone the moment
-            your card touches it. No app to install, nothing to type, no stack of
-            paper cards left behind in a drawer.
+            O FlechaCard coloca os seus contactos, links e trabalho em qualquer
+            telemóvel no momento em que o seu cartão lhe toca. Sem app para
+            instalar, nada para digitar, sem pilhas de cartões de papel
+            esquecidos numa gaveta.
           </p>
           <div class="hero__actions">
-            <a class="btn btn--copper" href="create.html">Create your card — free <span aria-hidden="true">→</span></a>
-            <a class="btn btn--ghost" href="#cards">Order a physical card</a>
+            <a class="btn btn--copper" href="create.html">Criar o meu cartão — grátis <span aria-hidden="true">→</span></a>
+            <a class="btn btn--ghost" href="#cards">Encomendar cartão físico</a>
           </div>
-          <p class="hero__note">Digital profile free forever · Works with iPhone &amp; Android · No app, no account</p>
+          <p class="hero__note">Perfil digital grátis para sempre · Funciona com iPhone e Android · Sem app, sem conta</p>
         </div>
 
-        <!-- Interactive demo: tilting card + phone that appears on tap -->
+        <!-- Demonstração interativa: cartão que inclina + telemóvel que aparece ao toque -->
         <div class="hero__demo" id="demo">
           <div class="demo__stage">
-            <button class="card3d" id="demo-card" aria-label="Tap the card to see the shared profile">
+            <button class="card3d" id="demo-card" aria-label="Toque no cartão para ver o perfil partilhado">
               <span class="card3d__coil" aria-hidden="true"></span>
               <span class="card3d__chip" aria-hidden="true"></span>
               <span class="card3d__brand" aria-hidden="true">➳</span>
-              <span class="card3d__name">Ana Ferreira</span>
-              <span class="card3d__role">Product Designer</span>
+              <span class="card3d__name">Ana Macuácua</span>
+              <span class="card3d__role">Designer de Produto</span>
             </button>
-            <span class="demo__hint" aria-hidden="true">Tap me</span>
+            <span class="demo__hint" aria-hidden="true">Toque aqui</span>
             <div class="phone" id="demo-phone" aria-live="polite" hidden>
               <div class="phone__notch" aria-hidden="true"></div>
               <div class="phone__screen">
-                <div class="phone__avatar" aria-hidden="true">AF</div>
-                <p class="phone__name">Ana Ferreira</p>
-                <p class="phone__role">Product Designer · Lisbon</p>
+                <div class="phone__avatar" aria-hidden="true">AM</div>
+                <p class="phone__name">Ana Macuácua</p>
+                <p class="phone__role">Designer de Produto · Maputo</p>
                 <div class="phone__actions">
-                  <span class="phone__pill">Save contact</span>
-                  <span class="phone__pill phone__pill--soft">Portfolio</span>
+                  <span class="phone__pill">Guardar contacto</span>
+                  <span class="phone__pill phone__pill--soft">Portfólio</span>
                   <span class="phone__pill phone__pill--soft">LinkedIn</span>
-                  <span class="phone__pill phone__pill--soft">Book a call</span>
+                  <span class="phone__pill phone__pill--soft">WhatsApp</span>
                 </div>
-                <p class="phone__foot">Shared via FlechaCard — no app installed</p>
+                <p class="phone__foot">Partilhado via FlechaCard — sem app instalada</p>
               </div>
             </div>
           </div>
-          <p class="demo__caption" id="demo-caption">This is a live demo — tap (or click) the card.</p>
+          <p class="demo__caption" id="demo-caption">Isto é uma demonstração — toque (ou clique) no cartão.</p>
         </div>
       </div>
     </section>
 
-    <!-- ======================= HOW IT WORKS ======================= -->
+    <!-- ======================= COMO FUNCIONA ======================= -->
     <section class="section" id="how">
       <div class="section__inner">
-        <p class="eyebrow">How it works</p>
-        <h2 class="section__title">From your pocket to their contacts in three seconds</h2>
+        <p class="eyebrow">Como funciona</p>
+        <h2 class="section__title">Do seu bolso para os contactos deles em três segundos</h2>
         <ol class="steps">
           <li class="step reveal">
             <span class="step__num" aria-hidden="true">1</span>
-            <h3>Build your profile</h3>
-            <p>Add your name, photo, phone, email, socials, portfolio, payment
-               links — anything you'd want to hand over. Edit it whenever you like;
-               your card always shares the latest version.</p>
+            <h3>Crie o seu perfil</h3>
+            <p>Adicione nome, foto, telefone, email, redes sociais, portfólio,
+               links de pagamento — tudo o que quiser entregar. Edite quando
+               quiser; o cartão partilha sempre a versão mais recente.</p>
           </li>
           <li class="step reveal">
             <span class="step__num" aria-hidden="true">2</span>
-            <h3>Tap any phone</h3>
-            <p>Hold your FlechaCard to the back of an iPhone or Android phone.
-               The copper coil inside does the rest — no app, no battery, no
-               charging, ever.</p>
+            <h3>Encoste a qualquer telemóvel</h3>
+            <p>Encoste o seu FlechaCard à parte de trás de um iPhone ou
+               Android. A bobina de cobre no interior faz o resto — sem app,
+               sem bateria, sem carregamento.</p>
           </li>
           <li class="step reveal">
             <span class="step__num" aria-hidden="true">3</span>
-            <h3>They save you instantly</h3>
-            <p>Your profile opens on their screen with a one-tap “Save contact”
-               button. You'll know your details landed — not lost in a wallet or
-               thrown away with the receipts.</p>
+            <h3>Guardam o seu contacto na hora</h3>
+            <p>O seu perfil abre no ecrã com um botão “Guardar contacto” de um
+               só toque. Os seus dados chegam ao destino — não ficam perdidos
+               numa carteira nem vão para o lixo com os recibos.</p>
           </li>
         </ol>
       </div>
     </section>
 
-    <!-- ======================= FEATURES ======================= -->
+    <!-- ======================= VANTAGENS ======================= -->
     <section class="section section--ink" id="features">
       <div class="section__inner">
-        <p class="eyebrow eyebrow--light">Why FlechaCard</p>
-        <h2 class="section__title">One card that never runs out</h2>
+        <p class="eyebrow eyebrow--light">Porquê o FlechaCard</p>
+        <h2 class="section__title">Um cartão que nunca se esgota</h2>
         <div class="features">
           <article class="feature reveal">
-            <h3>No app needed</h3>
-            <p>Works with the NFC reader built into every modern phone. The
-               person you meet installs nothing and signs up for nothing.</p>
+            <h3>Sem app</h3>
+            <p>Funciona com o leitor NFC integrado em todos os telemóveis
+               modernos. Quem conhece não instala nada nem cria conta.</p>
           </article>
           <article class="feature reveal">
-            <h3>Update anytime</h3>
-            <p>New job, new number, new portfolio? Change your profile online
-               and every card you own shares the new version instantly.</p>
+            <h3>Atualize quando quiser</h3>
+            <p>Novo emprego, novo número, novo portfólio? Altere o seu perfil
+               online e todos os seus cartões partilham a nova versão de
+               imediato.</p>
           </article>
           <article class="feature reveal">
-            <h3>All your links in one place</h3>
-            <p>Contact details, WhatsApp, LinkedIn, Instagram, your website,
-               calendars, payment links — everything you share, in one tap.</p>
+            <h3>Todos os seus links num só lugar</h3>
+            <p>Contactos, WhatsApp, LinkedIn, Instagram, o seu site,
+               calendários, links de pagamento — tudo o que partilha, num
+               toque.</p>
           </article>
           <article class="feature reveal">
-            <h3>QR code backup</h3>
-            <p>Every card carries a printed QR code on the back, so even older
-               phones without NFC can scan and save you.</p>
+            <h3>Código QR de reserva</h3>
+            <p>Todos os cartões trazem um código QR impresso no verso, para
+               que até telemóveis antigos sem NFC possam ler e guardar os seus
+               dados com a câmara.</p>
           </article>
           <article class="feature reveal">
-            <h3>Built for teams</h3>
-            <p>Order cards for your whole company with shared branding and a
-               dashboard to manage every profile from one place.</p>
+            <h3>Feito para equipas</h3>
+            <p>Encomende cartões para toda a empresa com a mesma imagem e um
+               painel para gerir todos os perfis num só lugar.</p>
           </article>
           <article class="feature reveal">
-            <h3>Paper-free by design</h3>
-            <p>The average box of 500 paper cards ends up mostly in the bin.
-               One FlechaCard replaces every reprint you'll never need.</p>
+            <h3>Sem papel, por princípio</h3>
+            <p>A maior parte de uma caixa de 500 cartões de papel acaba no
+               lixo. Um FlechaCard substitui todas as reimpressões de que
+               nunca vai precisar.</p>
           </article>
         </div>
       </div>
     </section>
 
-    <!-- ======================= CARDS & PRICING ======================= -->
+    <!-- ======================= CARTÕES E PREÇOS ======================= -->
     <section class="section" id="cards">
       <div class="section__inner">
-        <p class="eyebrow">The cards</p>
-        <h2 class="section__title">Pick your material.<br>Pay once, share forever.</h2>
+        <p class="eyebrow">Os cartões</p>
+        <h2 class="section__title">Escolha o seu material.<br>Pague uma vez, partilhe para sempre.</h2>
         <div class="pricing">
           <article class="price-card reveal">
             <div class="mini-card mini-card--classic" aria-hidden="true"><span>➳</span></div>
-            <h3>Classic</h3>
-            <p class="price-card__desc">Matte recycled PVC in cobalt or black.
-               Light, tough and ready for every pocket.</p>
-            <p class="price-card__price">€29 <span>one-time</span></p>
-            <a class="btn btn--outline" href="mailto:hello@flechacard.com?subject=Order%20FlechaCard%20Classic">Order Classic</a>
+            <h3>Clássico</h3>
+            <p class="price-card__desc">PVC reciclado mate em azul-cobalto ou
+               preto. Leve, resistente e pronto para qualquer bolso.</p>
+            <p class="price-card__price">1.999 MT <span>pagamento único</span></p>
+            <a class="btn btn--outline" href="mailto:hello@flechacard.com?subject=Encomenda%20FlechaCard%20Cl%C3%A1ssico">Encomendar Clássico</a>
           </article>
           <article class="price-card price-card--featured reveal">
-            <p class="price-card__badge">Most popular</p>
+            <p class="price-card__badge">Mais popular</p>
             <div class="mini-card mini-card--wood" aria-hidden="true"><span>➳</span></div>
-            <h3>Bamboo</h3>
-            <p class="price-card__desc">Laser-engraved sustainable bamboo.
-               Warm to the touch, impossible to forget.</p>
-            <p class="price-card__price">€39 <span>one-time</span></p>
-            <a class="btn btn--copper" href="mailto:hello@flechacard.com?subject=Order%20FlechaCard%20Bamboo">Order Bamboo</a>
+            <h3>Bambu</h3>
+            <p class="price-card__desc">Bambu sustentável gravado a laser.
+               Quente ao toque, impossível de esquecer.</p>
+            <p class="price-card__price">2.799 MT <span>pagamento único</span></p>
+            <a class="btn btn--copper" href="mailto:hello@flechacard.com?subject=Encomenda%20FlechaCard%20Bambu">Encomendar Bambu</a>
           </article>
           <article class="price-card reveal">
             <div class="mini-card mini-card--metal" aria-hidden="true"><span>➳</span></div>
             <h3>Metal</h3>
-            <p class="price-card__desc">Brushed stainless steel with engraved
-               detail. The heaviest handshake in the room.</p>
-            <p class="price-card__price">€59 <span>one-time</span></p>
-            <a class="btn btn--outline" href="mailto:hello@flechacard.com?subject=Order%20FlechaCard%20Metal">Order Metal</a>
+            <p class="price-card__desc">Aço inoxidável escovado com gravação.
+               O aperto de mão mais firme da sala.</p>
+            <p class="price-card__price">3.999 MT <span>pagamento único</span></p>
+            <a class="btn btn--outline" href="mailto:hello@flechacard.com?subject=Encomenda%20FlechaCard%20Metal">Encomendar Metal</a>
           </article>
         </div>
-        <p class="pricing__teams">Ordering for a team of 10 or more?
-          <a href="mailto:hello@flechacard.com?subject=FlechaCard%20team%20order">Talk to us about volume pricing and custom branding.</a></p>
+        <p class="pricing__teams">Vai encomendar para uma equipa de 10 ou mais?
+          <a href="mailto:hello@flechacard.com?subject=Encomenda%20FlechaCard%20para%20equipa">Fale connosco sobre preços por volume e imagem personalizada.</a></p>
       </div>
     </section>
 
-    <!-- ======================= TESTIMONIALS ======================= -->
+    <!-- ======================= TESTEMUNHOS ======================= -->
     <section class="section section--quiet">
       <div class="section__inner">
         <div class="quotes">
           <blockquote class="quote reveal">
-            <p>“I used to order 200 paper cards for every fair and come home with
-               180. Now I come home with a phone full of new contacts instead.”</p>
-            <footer>Rui M. — Real estate agent</footer>
+            <p>“Encomendava 200 cartões de papel para cada feira e voltava
+               para casa com 180. Agora volto com o telemóvel cheio de
+               contactos novos.”</p>
+            <footer>Rui M. — Consultor imobiliário, Maputo</footer>
           </blockquote>
           <blockquote class="quote reveal">
-            <p>“The moment the profile pops up on someone's phone, the
-               conversation changes. It's a small thing that feels like magic.”</p>
-            <footer>Sofia L. — Freelance photographer</footer>
+            <p>“No momento em que o perfil aparece no telemóvel da outra
+               pessoa, a conversa muda. É um pormenor que parece magia.”</p>
+            <footer>Sofia L. — Fotógrafa freelancer, Beira</footer>
           </blockquote>
           <blockquote class="quote reveal">
-            <p>“We gave the whole sales team FlechaCards with our branding.
-               Updating everyone's details takes one afternoon, not one reprint.”</p>
-            <footer>Miguel T. — Sales director</footer>
+            <p>“Demos FlechaCards com a nossa marca a toda a equipa comercial.
+               Atualizar os dados de todos leva uma tarde, não uma
+               reimpressão.”</p>
+            <footer>Miguel T. — Diretor comercial, Matola</footer>
           </blockquote>
         </div>
       </div>
     </section>
 
-    <!-- ======================= FAQ ======================= -->
+    <!-- ======================= PERGUNTAS ======================= -->
     <section class="section" id="faq">
       <div class="section__inner section__inner--narrow">
-        <p class="eyebrow">Questions</p>
-        <h2 class="section__title">Before you tap</h2>
+        <p class="eyebrow">Perguntas</p>
+        <h2 class="section__title">Antes de tocar</h2>
         <div class="faq">
           <details class="faq__item">
-            <summary>Does the other person need an app?</summary>
-            <p>No. Your profile opens in their phone's browser the moment you
-               tap. They can save your contact with one touch — nothing to
-               install on either side.</p>
+            <summary>A outra pessoa precisa de uma app?</summary>
+            <p>Não. O seu perfil abre no navegador do telemóvel dela no
+               momento do toque. Pode guardar o seu contacto com um só toque —
+               sem instalar nada de nenhum dos lados.</p>
           </details>
           <details class="faq__item">
-            <summary>Which phones does it work with?</summary>
-            <p>Any iPhone since the iPhone 7 and virtually every Android phone
-               made in the last decade reads NFC out of the box. For anything
-               older, the QR code printed on the back of your card does the same
-               job with the camera.</p>
+            <summary>Com que telemóveis funciona?</summary>
+            <p>Qualquer iPhone desde o iPhone 7 e praticamente todos os
+               Android da última década leem NFC de fábrica. Para aparelhos
+               mais antigos, o código QR impresso no verso do cartão faz o
+               mesmo trabalho com a câmara.</p>
           </details>
           <details class="faq__item">
-            <summary>Is there a subscription?</summary>
-            <p>No. You pay once for the card and your digital profile is
-               included, with free edits forever. There's nothing to renew.</p>
+            <summary>Há alguma subscrição?</summary>
+            <p>Não. Paga o cartão uma vez e o perfil digital está incluído,
+               com edições gratuitas para sempre. Não há nada para renovar.</p>
           </details>
           <details class="faq__item">
-            <summary>What happens if I change jobs or numbers?</summary>
-            <p>Log in, edit your profile, done. The card in your pocket
-               instantly shares the new version — it's a key to your profile,
-               not a copy of it.</p>
+            <summary>E se eu mudar de emprego ou de número?</summary>
+            <p>Entra, edita o perfil, pronto. O cartão no seu bolso passa a
+               partilhar a nova versão — é uma chave para o seu perfil, não
+               uma cópia dele.</p>
           </details>
           <details class="faq__item">
-            <summary>Does the card need charging?</summary>
-            <p>Never. The copper coil inside is powered by the phone it touches,
-               so the card has no battery and nothing to wear out.</p>
+            <summary>O cartão precisa de ser carregado?</summary>
+            <p>Nunca. A bobina de cobre no interior é alimentada pelo
+               telemóvel que toca, por isso o cartão não tem bateria nem nada
+               que se gaste.</p>
           </details>
           <details class="faq__item">
-            <summary>Can I put my company's logo on the cards?</summary>
-            <p>Yes — every card can be printed or engraved with your own design,
-               and team orders include matching branding across all profiles.</p>
+            <summary>Posso pôr o logótipo da minha empresa nos cartões?</summary>
+            <p>Sim — todos os cartões podem ser impressos ou gravados com o
+               seu próprio design, e as encomendas para equipas incluem imagem
+               coerente em todos os perfis.</p>
           </details>
         </div>
       </div>
     </section>
 
-    <!-- ======================= FINAL CTA ======================= -->
+    <!-- ======================= CTA FINAL ======================= -->
     <section class="cta-band" id="order">
       <div class="cta-band__inner">
-        <h2>Your next introduction<br>is one tap away.</h2>
-        <p>Create your free digital card now — and never hand out a paper card again.</p>
-        <a class="btn btn--copper btn--big" href="create.html">Create your card <span aria-hidden="true">→</span></a>
+        <h2>A sua próxima apresentação<br>está à distância de um toque.</h2>
+        <p>Crie já o seu cartão digital grátis — e nunca mais entregue um cartão de papel.</p>
+        <a class="btn btn--copper btn--big" href="create.html">Criar o meu cartão <span aria-hidden="true">→</span></a>
       </div>
     </section>
   </main>
 
-  <!-- ======================= FOOTER ======================= -->
+  <!-- ======================= RODAPÉ ======================= -->
   <footer class="footer">
     <div class="footer__inner">
       <div class="footer__brand">
         <span class="nav__glyph" aria-hidden="true">➳</span> FlechaCard
-        <p>The NFC business card.<br>One tap. Straight to you.</p>
+        <p>O cartão de visita NFC.<br>Um toque. Direto até si.</p>
       </div>
-      <nav class="footer__col" aria-label="Product">
-        <h3>Product</h3>
-        <a href="create.html">Create your card</a>
-        <a href="#how">How it works</a>
-        <a href="#features">Features</a>
-        <a href="#cards">Cards &amp; pricing</a>
+      <nav class="footer__col" aria-label="Produto">
+        <h3>Produto</h3>
+        <a href="create.html">Criar cartão</a>
+        <a href="#how">Como funciona</a>
+        <a href="#features">Vantagens</a>
+        <a href="#cards">Cartões e preços</a>
       </nav>
-      <nav class="footer__col" aria-label="Support">
-        <h3>Support</h3>
-        <a href="#faq">FAQ</a>
+      <nav class="footer__col" aria-label="Apoio">
+        <h3>Apoio</h3>
+        <a href="#faq">Perguntas</a>
         <a href="mailto:hello@flechacard.com">hello@flechacard.com</a>
       </nav>
     </div>
-    <p class="footer__legal">© <span id="year">2026</span> FlechaCard. All rights reserved.</p>
+    <p class="footer__legal">© <span id="year">2026</span> FlechaCard, Moçambique. Todos os direitos reservados.</p>
   </footer>
 
   <script src="js/main.js"></script>

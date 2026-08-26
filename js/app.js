@@ -66,7 +66,8 @@
         if (input && existing[k]) input.value = existing[k];
       });
       var title = document.getElementById("page-title");
-      if (title) title.textContent = "Edit your card";
+      if (title) title.textContent = "Editar o seu cartão";
+      document.title = "Editar o seu cartão — FlechaCard";
     }
 
     function readProfile() {
@@ -124,8 +125,8 @@
       copyBtn.addEventListener("click", function () {
         linkInput.select();
         var done = function () {
-          copyBtn.textContent = "Copied!";
-          setTimeout(function () { copyBtn.textContent = "Copy link"; }, 1600);
+          copyBtn.textContent = "Copiado!";
+          setTimeout(function () { copyBtn.textContent = "Copiar link"; }, 1600);
         };
         if (navigator.clipboard && navigator.clipboard.writeText) {
           navigator.clipboard.writeText(linkInput.value).then(done, function () {
@@ -174,10 +175,10 @@
         a.rel = "noopener";
         links.appendChild(a);
       }
-      if (data.p) addLink("Call", "tel:" + digits(data.p));
+      if (data.p) addLink("Ligar", "tel:" + digits(data.p));
       if (data.e) addLink("Email", "mailto:" + data.e);
       if (data.wa) addLink("WhatsApp", "https://wa.me/" + digits(data.wa).replace(/^\+/, ""));
-      if (data.w) addLink("Website", normalizeUrl(data.w));
+      if (data.w) addLink("Site", normalizeUrl(data.w));
       if (data.li) addLink("LinkedIn", normalizeUrl(data.li.indexOf("/") === -1 ? "linkedin.com/in/" + data.li : data.li));
       if (data.ig) addLink("Instagram", "https://instagram.com/" + data.ig.replace(/^@/, "").replace(/^.*instagram\.com\//i, "").replace(/\/$/, ""));
 
