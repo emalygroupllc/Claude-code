@@ -1,7 +1,8 @@
 -- FlechaCard — Supabase setup
--- Paste this whole file into the Supabase dashboard: SQL Editor → New query → Run.
--- Safe to run more than once.
+-- Cole este ficheiro inteiro no SQL Editor do Supabase e carregue em Run.
+-- Pode ser corrido as vezes que quiser: não apaga nada.
 
+-- 1. Tabela dos cartões ------------------------------------------------
 create table if not exists public.cards (
   id uuid primary key default gen_random_uuid(),
   slug text unique not null,
@@ -13,63 +14,59 @@ create table if not exists public.cards (
 
 alter table public.cards enable row level security;
 
--- The public may read cards (but never the edit_key column, see grants below).
+-- Qualquer pessoa pode ler cartões; a coluna edit_key fica escondida
+-- porque não é incluída no grant de select mais abaixo.
 drop policy if exists "public read" on public.cards;
 create policy "public read" on public.cards for select using (true);
 
--- No direct writes from the browser: everything goes through the functions.
+-- Nada é escrito diretamente pelo navegador: só através das funções.
 revoke all on public.cards from anon, authenticated;
 grant select (slug, data, updated_at) on public.cards to anon, authenticated;
 
--- Create a card: generates a short slug and a secret edit key.
+-- 2. Criar um cartão ---------------------------------------------------
+-- Devolve o código curto do cartão e a chave secreta de edição.
+-- gen_random_uuid() faz parte do PostgreSQL, por isso não é preciso
+-- instalar nenhuma extensão.
 create or replace function public.create_card(card_data jsonb)
 returns json
-language plpgsql
+language sql
 security definer
 set search_path = public
 as $$
-declare
-  new_slug text;
-  new_key uuid;
-  tries int := 0;
-begin
-  if pg_column_size(card_data) > 20000 then
-    raise exception 'card_too_large';
-  end if;
-  loop
-    new_slug := lower(substr(encode(gen_random_bytes(6), 'hex'), 1, 8));
-    begin
-      insert into public.cards (slug, data) values (new_slug, card_data)
-        returning edit_key into new_key;
-      exit;
-    exception when unique_violation then
-      tries := tries + 1;
-      if tries > 5 then raise; end if;
-    end;
-  end loop;
-  return json_build_object('slug', new_slug, 'edit_key', new_key);
-end;
+  insert into public.cards (slug, data)
+  values (substr(replace(gen_random_uuid()::text, '-', ''), 1, 10), card_data)
+  returning json_build_object('slug', slug, 'edit_key', edit_key);
 $$;
 
--- Update a card: only works with the matching secret edit key.
+-- 3. Atualizar um cartão -----------------------------------------------
+-- Só funciona com a chave de edição correta; devolve true se atualizou.
 create or replace function public.update_card(card_slug text, key uuid, card_data jsonb)
 returns boolean
-language plpgsql
+language sql
 security definer
 set search_path = public
 as $$
-begin
-  if pg_column_size(card_data) > 20000 then
-    raise exception 'card_too_large';
-  end if;
-  update public.cards
-     set data = card_data, updated_at = now()
-   where slug = card_slug and edit_key = key;
-  return found;
-end;
+  with updated as (
+    update public.cards
+       set data = card_data, updated_at = now()
+     where slug = card_slug and edit_key = key
+    returning 1
+  )
+  select exists (select 1 from updated);
 $$;
 
+-- 4. Permissões --------------------------------------------------------
 revoke all on function public.create_card(jsonb) from public;
 revoke all on function public.update_card(text, uuid, jsonb) from public;
 grant execute on function public.create_card(jsonb) to anon, authenticated;
 grant execute on function public.update_card(text, uuid, jsonb) to anon, authenticated;
+
+-- 5. Avisar a API para recarregar (senão as funções dão erro 404) -------
+notify pgrst, 'reload schema';
+
+-- 6. Confirmação: deve mostrar duas linhas, create_card e update_card ---
+select routine_name as funcao_criada
+  from information_schema.routines
+ where routine_schema = 'public'
+   and routine_name in ('create_card', 'update_card')
+ order by routine_name;

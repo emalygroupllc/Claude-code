@@ -97,6 +97,7 @@
       verdict.hidden = false;
     }
 
+    var c3ref = null;
     var base = (CFG.supabaseUrl || "").replace(/\/+$/, "");
     var key = CFG.supabaseAnonKey || "";
     var headers = { "apikey": key, "Content-Type": "application/json" };
@@ -127,6 +128,7 @@
         c2.pass("A tabela existe e está acessível.");
         // 3. create a test card
         var c3 = add("Criar um cartão de teste");
+        c3ref = c3;
         return fetch(base + "/rest/v1/rpc/create_card", {
           method: "POST",
           headers: headers,
@@ -169,8 +171,21 @@
       })
       .catch(function (err) {
         var m = err && err.message ? err.message : "";
-        if (m === "no_table" || m === "no_function") {
-          if (m === "no_table") c2.fail("A tabela não existe (erro 404).");
+        if (m === "no_function") {
+          if (c3ref) c3ref.fail("A função create_card não existe na API (erro 404).");
+          finish(false,
+            "<h2>A tabela existe, mas faltam as funções</h2>" +
+            "<p>O script foi corrido só em parte: a tabela foi criada, mas as " +
+            "funções <code>create_card</code> e <code>update_card</code> não. " +
+            "Corra o script outra vez, completo:</p><ol>" +
+            '<li>Abra o <a href="https://supabase.com/dashboard/project/cjkigvdsxonvmefqfadq/sql/new" target="_blank" rel="noopener">SQL Editor do Supabase</a>.</li>' +
+            "<li>Selecione tudo o que lá estiver e apague, antes de colar.</li>" +
+            '<li>Cole o script <strong>inteiro</strong> e carregue em <strong>Run</strong>.</li>' +
+            "<li>No fim deve aparecer uma tabela com duas linhas: " +
+            "<code>create_card</code> e <code>update_card</code>.</li>" +
+            "<li>Volte a abrir esta página.</li></ol>");
+        } else if (m === "no_table") {
+          c2.fail("A tabela não existe (erro 404).");
           finish(false,
             "<h2>Falta preparar a base de dados</h2>" +
             "<p>O passo em falta é correr o script de configuração:</p><ol>" +
