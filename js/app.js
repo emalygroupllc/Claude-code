@@ -112,6 +112,33 @@
     return location.href.split(/[?#]/)[0];
   }
 
+  // Public card links look like <site>/<name>. The 404 page turns that
+  // path back into a card, so no query string is needed.
+  function siteRoot() {
+    var root = CFG.siteBase || pageBase().replace(/[^\/]*$/, "");
+    return root.slice(-1) === "/" ? root : root + "/";
+  }
+
+  function publicCardUrl(slug) {
+    return siteRoot() + encodeURIComponent(slug);
+  }
+
+  // Names are lowercase, digits and hyphens only. The "live" variant keeps
+  // a trailing hyphen so that typing a space mid-name does not swallow the
+  // separator; the strict variant trims it when the name is submitted.
+  function cleanSlugLive(v) {
+    return (v || "").toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9-]+/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-/, "")
+      .slice(0, 40);
+  }
+
+  function cleanSlug(v) {
+    return cleanSlugLive(v).replace(/-$/, "");
+  }
+
   var year = document.getElementById("year");
   if (year) year.textContent = String(new Date().getFullYear());
 
@@ -131,10 +158,43 @@
     var qrBox = document.getElementById("qr-box");
     var qrEl = document.getElementById("qr");
     var submitBtn = form.querySelector('button[type="submit"]');
+    var slugInput = document.getElementById("f-slug");
+    var slugHint = document.getElementById("slug-hint");
+    var slugBase = document.getElementById("slug-base");
 
     var params = new URLSearchParams(location.search);
     var editSlug = params.get("c");
     var editKey = params.get("k");
+
+    /* ---------- chosen link name ---------- */
+    if (slugBase) {
+      slugBase.textContent = siteRoot().replace(/^https?:\/\//, "");
+    }
+    if (slugInput) {
+      slugInput.addEventListener("input", function () {
+        var pos = slugInput.selectionStart;
+        var cleaned = cleanSlugLive(slugInput.value);
+        if (cleaned !== slugInput.value) {
+          slugInput.value = cleaned;
+          try { slugInput.setSelectionRange(pos, pos); } catch (ignore) {}
+        }
+        slugHint.className = "slug-hint";
+        slugHint.textContent = cleaned
+          ? "O seu cartão vai ficar em " + siteRoot().replace(/^https?:\/\//, "") + cleaned
+          : "Deixe vazio para receber um código automático. Só letras minúsculas, números e hífens.";
+      });
+      // suggest a name from the person's name, until they type their own
+      var slugTouched = false;
+      slugInput.addEventListener("focus", function () { slugTouched = true; });
+      var nameField = document.getElementById("f-name");
+      if (nameField) {
+        nameField.addEventListener("input", function () {
+          if (!slugTouched && !slugInput.value) {
+            slugInput.placeholder = cleanSlug(nameField.value) || "ana-macuacua";
+          }
+        });
+      }
+    }
 
     /* ---------- profile photo ---------- */
     var photoData = null; // base64 JPEG, no data: prefix
@@ -227,6 +287,13 @@
       var title = document.getElementById("page-title");
       if (title) title.textContent = "Editar o seu cartão";
       document.title = "Editar o seu cartão — FlechaCard";
+      if (slugInput && editSlug) {
+        slugInput.value = editSlug;
+        slugInput.readOnly = true;
+        slugInput.setAttribute("aria-readonly", "true");
+        slugHint.textContent = "O link mantém-se igual — é isso que faz com que " +
+          "quem já o guardou continue a ver os seus dados atualizados.";
+      }
     }
 
     if (API && editSlug && editKey) {
@@ -308,13 +375,14 @@
 
       if (API) {
         submitBtn.disabled = true;
+        var wanted = slugInput ? cleanSlug(slugInput.value) : "";
         var call = (editSlug && editKey)
           ? API.rpc("update_card", { card_slug: editSlug, key: editKey, card_data: obj })
               .then(function (ok) {
                 if (ok !== true) throw new Error("bad_key");
                 return { slug: editSlug, edit_key: editKey };
               })
-          : API.rpc("create_card", { card_data: obj });
+          : API.rpc("create_card", { card_data: obj, desired_slug: wanted || null });
         call.then(function (res) {
           submitBtn.disabled = false;
           // remember the edit credentials so a page refresh keeps them
@@ -323,15 +391,22 @@
           var editHref = base + "?c=" + encodeURIComponent(res.slug) + "&k=" + encodeURIComponent(res.edit_key);
           try { history.replaceState(null, "", editHref); } catch (ignore) {}
           showResult(
-            cardBase + "?c=" + encodeURIComponent(res.slug),
+            publicCardUrl(res.slug),
             editHref,
-            "Este é o link permanente do seu cartão — curto, e mantém-se igual quando editar. Guarde também o link de edição abaixo: é a sua chave para atualizar o cartão."
+            "Este é o link permanente do seu cartão — mantém-se igual sempre que editar. Guarde também o link de edição abaixo: é a sua chave para atualizar o cartão."
           );
         }).catch(function (err) {
           submitBtn.disabled = false;
           var code = err && err.message ? err.message : "";
           if (code === "bad_key") {
             showError("Este link de edição já não é válido. Crie um cartão novo a partir da página inicial.");
+          } else if (code === "api_409") {
+            showError("O nome “" + wanted + "” já está a ser usado. Escolha outro — por exemplo " +
+                      wanted + "-" + Math.floor(Math.random() * 90 + 10) + ".");
+            if (slugInput) slugInput.focus();
+          } else if (code === "api_400") {
+            showError("Esse nome de link não é válido. Use letras minúsculas, números e hífens, com pelo menos 3 caracteres.");
+            if (slugInput) slugInput.focus();
           } else if (code === "api_404") {
             showError("A base de dados ainda não está preparada (erro 404). Falta correr o script de configuração no Supabase.");
           } else if (code === "api_401" || code === "api_403") {
@@ -379,6 +454,11 @@
     var emptyEl = document.getElementById("empty");
     var cardParams = new URLSearchParams(location.search);
     var cardSlug = cardParams.get("c");
+    if (!cardSlug) {
+      // clean links: <site>/<name> lands on the 404 page, which renders here
+      var seg = decodeURIComponent(location.pathname.replace(/\/+$/, "").split("/").pop() || "");
+      if (seg && !/\.[a-z0-9]+$/i.test(seg)) cardSlug = cleanSlug(seg);
+    }
 
     var render = function (data) {
       if (!data) {

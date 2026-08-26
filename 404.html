@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cartão digital — FlechaCard</title>
+  <meta name="robots" content="noindex">
+  <!-- This page is served for any unknown path, which is how clean card
+       links (<site>/<nome>) work. Relative URLs below must resolve against
+       the site root, not the made-up path, so set the base first. -->
+  <script>
+    (function () {
+      var dir = location.pathname.replace(/\/+$/, "").replace(/[^\/]*$/, "");
+      document.write('<base href="' + dir + '">');
+    })();
+  </script>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>➳</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script>document.documentElement.classList.add("js");</script>
+</head>
+<body class="app-page app-page--card">
+
+  <main class="cardview">
+    <article class="profile" id="profile" hidden>
+      <div class="profile__head">
+        <div class="profile__avatar" id="p-avatar" aria-hidden="true"></div>
+        <h1 class="profile__name" id="p-name"></h1>
+        <p class="profile__role" id="p-role"></p>
+        <p class="profile__bio" id="p-bio"></p>
+      </div>
+      <div class="profile__actions">
+        <button class="btn btn--copper profile__save" id="save-contact" type="button">Guardar contacto</button>
+        <div class="profile__links" id="p-links"></div>
+      </div>
+      <p class="profile__foot">
+        Partilhado via <a href="index.html"><span aria-hidden="true">➳</span> FlechaCard</a>
+        · <a id="p-edit" href="create.html">Editar este cartão</a>
+      </p>
+    </article>
+
+    <article class="profile profile--empty" id="empty" hidden>
+      <div class="profile__head">
+        <div class="profile__avatar" aria-hidden="true">➳</div>
+        <h1 class="profile__name">Cartão não encontrado</h1>
+        <p class="profile__bio">Não existe nenhum cartão neste endereço.
+           Verifique o link, ou crie o seu.</p>
+      </div>
+      <div class="profile__actions">
+        <a class="btn btn--copper" href="create.html">Criar o meu cartão</a>
+      </div>
+      <p class="profile__foot"><a href="index.html"><span aria-hidden="true">➳</span> FlechaCard</a> — um toque, direto até si.</p>
+    </article>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

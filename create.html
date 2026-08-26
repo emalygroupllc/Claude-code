@@ -32,9 +32,8 @@
       <p class="eyebrow">Grátis — sem conta</p>
       <h1 class="app__title" id="page-title">Criar o seu cartão</h1>
       <p class="app__lead">Preencha o que quer partilhar. Só o nome é
-         obrigatório — o resto é opcional. Os seus dados vivem dentro do
-         próprio link, por isso não há registo nem base de dados a guardar a
-         sua informação.</p>
+         obrigatório — o resto é opcional. Não precisa de criar conta: no
+         fim recebe um link permanente e um código QR para partilhar.</p>
 
       <form class="form" id="card-form" novalidate>
         <fieldset class="form__group">
@@ -98,6 +97,21 @@
           <div class="field">
             <label for="f-instagram">Instagram</label>
             <input id="f-instagram" name="ig" type="text" placeholder="@anamacuacua">
+          </div>
+        </fieldset>
+
+        <fieldset class="form__group form__group--slug">
+          <legend>O seu link</legend>
+          <div class="field field--full">
+            <label for="f-slug">Nome do link <span class="field__req">opcional</span></label>
+            <div class="slug-input">
+              <span class="slug-input__base" id="slug-base">.../</span>
+              <input id="f-slug" name="slug" type="text" inputmode="url"
+                     autocapitalize="none" autocorrect="off" spellcheck="false"
+                     maxlength="40" placeholder="ana-macuacua">
+            </div>
+            <p class="slug-hint" id="slug-hint">Deixe vazio para receber um código
+               automático. Só letras minúsculas, números e hífens.</p>
           </div>
         </fieldset>
 

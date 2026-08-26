@@ -1114,3 +1114,39 @@ a { color: var(--cobalt); }
   white-space: pre;
   margin-top: 0.6rem;
 }
+
+/* ---------- chosen link name ---------- */
+.slug-input {
+  display: flex;
+  align-items: stretch;
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  background: var(--porcelain);
+  overflow: hidden;
+}
+.slug-input:focus-within { border-color: var(--cobalt); }
+.slug-input__base {
+  display: flex;
+  align-items: center;
+  padding: 0.65rem 0 0.65rem 0.85rem;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--slate);
+  white-space: nowrap;
+  max-width: 55%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.slug-input input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: none;
+  border-radius: 0;
+  padding-left: 0.15rem;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+}
+.slug-input input:focus { outline: none; }
+.slug-hint { font-size: 0.82rem; margin-top: 0.4rem; }
+.slug-hint--bad { color: #B3372B; font-weight: 600; }

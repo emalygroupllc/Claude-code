@@ -23,18 +23,42 @@ create policy "public read" on public.cards for select using (true);
 revoke all on public.cards from anon, authenticated;
 grant select (slug, data, updated_at) on public.cards to anon, authenticated;
 
+-- 1b. Regras para o nome do link ---------------------------------------
+-- Só letras minúsculas, números e hífens; nomes do próprio site ficam
+-- reservados para não colidirem com as páginas.
+alter table public.cards drop constraint if exists cards_slug_valid;
+alter table public.cards add constraint cards_slug_valid check (
+  slug ~ '^[a-z0-9][a-z0-9-]{1,38}[a-z0-9]$'
+  and slug not in (
+    'index', 'create', 'card', 'diagnostico', 'css', 'js', 'supabase',
+    'assets', 'api', 'admin', 'www', 'flechacard', 'readme', 'robots',
+    'sitemap', 'favicon', '404'
+  )
+);
+
 -- 2. Criar um cartão ---------------------------------------------------
 -- Devolve o código curto do cartão e a chave secreta de edição.
 -- gen_random_uuid() faz parte do PostgreSQL, por isso não é preciso
 -- instalar nenhuma extensão.
-create or replace function public.create_card(card_data jsonb)
+-- desired_slug: o nome escolhido pela pessoa. Se vier vazio, é gerado um
+-- código aleatório. Se já estiver ocupado, a base de dados recusa e o
+-- site mostra a mensagem certa.
+drop function if exists public.create_card(jsonb);
+
+create or replace function public.create_card(card_data jsonb, desired_slug text default null)
 returns json
 language sql
 security definer
 set search_path = public
 as $$
   insert into public.cards (slug, data)
-  values (substr(replace(gen_random_uuid()::text, '-', ''), 1, 10), card_data)
+  values (
+    coalesce(
+      nullif(lower(trim(coalesce(desired_slug, ''))), ''),
+      substr(replace(gen_random_uuid()::text, '-', ''), 1, 10)
+    ),
+    card_data
+  )
   returning json_build_object('slug', slug, 'edit_key', edit_key);
 $$;
 
@@ -56,9 +80,9 @@ as $$
 $$;
 
 -- 4. Permissões --------------------------------------------------------
-revoke all on function public.create_card(jsonb) from public;
+revoke all on function public.create_card(jsonb, text) from public;
 revoke all on function public.update_card(text, uuid, jsonb) from public;
-grant execute on function public.create_card(jsonb) to anon, authenticated;
+grant execute on function public.create_card(jsonb, text) to anon, authenticated;
 grant execute on function public.update_card(text, uuid, jsonb) to anon, authenticated;
 
 -- 5. Avisar a API para recarregar (senão as funções dão erro 404) -------
