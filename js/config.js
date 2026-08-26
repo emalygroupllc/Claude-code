@@ -4,5 +4,5 @@
 // working in link-only mode (profile data carried inside the link).
 window.FLECHA_CONFIG = window.FLECHA_CONFIG || {
   supabaseUrl: "https://cjkigvdsxonvmefqfadq.supabase.co",
-  supabaseAnonKey: ""
+  supabaseAnonKey: "sb_publishable_aJMnMRLVL1PDNA0iLcHf_g_coe7UNF1"
 };
