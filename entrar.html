@@ -71,6 +71,7 @@
     var tabSignup = document.getElementById("tab-signup");
     var forgot = document.getElementById("forgot");
     var mode = "login";
+    var query = new URLSearchParams(location.search);
 
     if (!window.FlechaAuth || !FlechaAuth.enabled) {
       errorEl.textContent = "As contas ainda não estão configuradas neste site.";
@@ -79,10 +80,25 @@
       return;
     }
 
-    // já autenticado? segue direto para o painel
-    if (FlechaAuth.isLoggedIn()) {
+    // Veio de um link de recuperação: definir uma palavra-passe nova.
+    if (query.get("recuperar") === "1" && FlechaAuth.isLoggedIn()) {
+      document.querySelector(".authtabs").hidden = true;
+      document.getElementById("forgot").hidden = true;
+      document.getElementById("a-email").closest(".field").hidden = true;
+      lead.textContent = "Escolha uma palavra-passe nova para a sua conta.";
+      passEl.placeholder = "Nova palavra-passe";
+      passEl.autocomplete = "new-password";
+      submit.textContent = "Guardar palavra-passe";
+      mode = "recover";
+    } else if (FlechaAuth.isLoggedIn()) {
+      // já autenticado? segue direto para o painel
       location.replace("painel.html");
       return;
+    }
+
+    // O link do email falhou (por exemplo, já tinha expirado).
+    if (query.get("erro")) {
+      show(errorEl, decodeURIComponent(query.get("erro")));
     }
 
     function show(el, msg) {
@@ -129,7 +145,7 @@
       clear();
       var email = emailEl.value.trim();
       var pass = passEl.value;
-      if (!email || email.indexOf("@") === -1) {
+      if (mode !== "recover" && (!email || email.indexOf("@") === -1)) {
         show(errorEl, "Escreva um email válido.");
         emailEl.focus();
         return;
@@ -140,12 +156,25 @@
         return;
       }
       submit.disabled = true;
-      submit.textContent = mode === "login" ? "A entrar…" : "A criar…";
+      var labels = { login: ["A entrar…", "Entrar"],
+                     signup: ["A criar…", "Criar conta"],
+                     recover: ["A guardar…", "Guardar palavra-passe"] };
+      submit.textContent = labels[mode][0];
 
       var done = function () {
         submit.disabled = false;
-        submit.textContent = mode === "login" ? "Entrar" : "Criar conta";
+        submit.textContent = labels[mode][1];
       };
+
+      if (mode === "recover") {
+        FlechaAuth.updatePassword(pass).then(function () {
+          location.href = "painel.html";
+        }).catch(function (err) {
+          done();
+          show(errorEl, friendly(err));
+        });
+        return;
+      }
 
       if (mode === "login") {
         FlechaAuth.signIn(email, pass).then(function () {

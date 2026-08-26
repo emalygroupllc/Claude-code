@@ -25,6 +25,10 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+/* Elements set to display:flex/grid below would otherwise ignore the
+   hidden attribute, so hidden always wins. */
+[hidden] { display: none !important; }
+
 html { scroll-behavior: smooth; }
 
 body {

@@ -74,7 +74,14 @@
       return;
     }
 
-    document.getElementById("nav-user").textContent = FlechaAuth.email() || "";
+    var navUser = document.getElementById("nav-user");
+    navUser.textContent = FlechaAuth.email() || "";
+    if (!navUser.textContent && FlechaAuth.refreshEmail) {
+      // logo após confirmar o email, o endereço ainda não está guardado
+      FlechaAuth.refreshEmail().then(function (u) {
+        if (u && u.email) navUser.textContent = u.email;
+      });
+    }
     document.getElementById("signout").addEventListener("click", function () {
       FlechaAuth.signOut().then(function () { location.href = "index.html"; });
     });

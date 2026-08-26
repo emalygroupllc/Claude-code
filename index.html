@@ -319,7 +319,20 @@
   <script src="js/auth.js"></script>
   <script>
     (function () {
-      if (!window.FlechaAuth || !FlechaAuth.enabled || !FlechaAuth.isLoggedIn()) return;
+      if (!window.FlechaAuth || !FlechaAuth.enabled) return;
+      // Chegou aqui a partir do email de confirmação ou de recuperação?
+      var ev = FlechaAuth.hashEvent;
+      if (ev) {
+        if (ev.session) {
+          location.replace(ev.type === "recovery" ? "entrar.html?recuperar=1" : "painel.html");
+          return;
+        }
+        if (ev.error) {
+          location.replace("entrar.html?erro=" + encodeURIComponent(ev.error));
+          return;
+        }
+      }
+      if (!FlechaAuth.isLoggedIn()) return;
       ["nav-account", "nav-account-mobile"].forEach(function (id) {
         var el = document.getElementById(id);
         if (el) { el.textContent = "Os meus cartões"; el.href = "painel.html"; }

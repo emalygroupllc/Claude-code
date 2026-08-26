@@ -66,6 +66,55 @@
     });
   }
 
+  // After confirming an email (or following a recovery link), Supabase
+  // sends people back with the session in the URL fragment. Turn that into
+  // a stored session and scrub the URL so the tokens do not linger in
+  // history or get pasted into a chat.
+  function fetchUserEmail() {
+    var s = read();
+    if (!s) return Promise.resolve(null);
+    return fetch(base + "/auth/v1/user", {
+      headers: { "apikey": CFG.supabaseAnonKey, "Authorization": "Bearer " + s.access_token }
+    }).then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (u) {
+        if (u && u.email) {
+          var cur = read();
+          if (cur) { cur.email = u.email; write(cur); }
+        }
+        return u;
+      }).catch(function () { return null; });
+  }
+
+  function consumeHash() {
+    var raw = location.hash || "";
+    if (raw.indexOf("access_token=") === -1 &&
+        raw.indexOf("error_description=") === -1 &&
+        raw.indexOf("error=") === -1) return null;
+
+    var p = new URLSearchParams(raw.replace(/^#/, ""));
+    var event = {
+      type: p.get("type") || "",
+      error: p.get("error_description") || p.get("error") || "",
+      session: null
+    };
+    if (p.get("access_token")) {
+      event.session = store({
+        access_token: p.get("access_token"),
+        refresh_token: p.get("refresh_token"),
+        expires_in: parseInt(p.get("expires_in") || "3600", 10)
+      });
+      fetchUserEmail();
+    }
+    try {
+      history.replaceState(null, "", location.pathname + location.search);
+    } catch (e) {
+      location.hash = "";
+    }
+    return event;
+  }
+
+  var hashEvent = consumeHash();
+
   var refreshing = null;
 
   function session() {
@@ -83,6 +132,30 @@
 
   window.FlechaAuth = {
     enabled: true,
+
+    // Set when this page load carried a confirmation or recovery result.
+    hashEvent: hashEvent,
+
+    refreshEmail: fetchUserEmail,
+
+    updatePassword: function (password) {
+      var s = read();
+      if (!s) return Promise.reject(new Error("sem sessão"));
+      return fetch(base + "/auth/v1/user", {
+        method: "PUT",
+        headers: {
+          "apikey": CFG.supabaseAnonKey,
+          "Authorization": "Bearer " + s.access_token,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ password: password })
+      }).then(function (r) {
+        return r.json().catch(function () { return {}; }).then(function (data) {
+          if (!r.ok) throw new Error(data.msg || data.message || ("auth_" + r.status));
+          return data;
+        });
+      });
+    },
 
     // Cabeçalhos para as chamadas à base de dados: com sessão, o pedido
     // vai assinado como este utilizador; sem sessão, como visitante.
