@@ -1100,3 +1100,17 @@ a { color: var(--cobalt); }
 @media (min-width: 641px) {
   .nav__mobile { display: none !important; }
 }
+
+.verdict__note { font-size: 0.85rem; }
+.report {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  line-height: 1.5;
+  background: var(--ink);
+  color: var(--mist);
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  overflow-x: auto;
+  white-space: pre;
+  margin-top: 0.6rem;
+}

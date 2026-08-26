@@ -46,6 +46,7 @@
     var CFG = window.FLECHA_CONFIG || {};
     var list = document.getElementById("checks");
     var verdict = document.getElementById("verdict");
+    var report = ["FlechaCard — relatório de diagnóstico", "Data: " + new Date().toISOString()];
     document.getElementById("year").textContent = String(new Date().getFullYear());
 
     function add(label) {
@@ -58,17 +59,41 @@
         pass: function (msg) {
           li.className = "check check--pass";
           li.querySelector(".check__detail").textContent = msg;
+          report.push("OK   | " + label + " | " + msg);
         },
         fail: function (msg) {
           li.className = "check check--fail";
           li.querySelector(".check__detail").textContent = msg;
+          report.push("FALHA| " + label + " | " + msg);
         }
       };
     }
 
     function finish(ok, html) {
       verdict.className = "verdict " + (ok ? "verdict--ok" : "verdict--bad");
-      verdict.innerHTML = html;
+      verdict.innerHTML = html +
+        '<p><button class="btn btn--outline btn--small" type="button" id="copy-report">Copiar relatório</button>' +
+        '<span class="verdict__note"> — cole o texto na conversa para eu analisar.</span></p>' +
+        '<pre class="report" id="report-text"></pre>';
+      var text = report.join("\n");
+      document.getElementById("report-text").textContent = text;
+      document.getElementById("copy-report").addEventListener("click", function () {
+        var btn = this;
+        var done = function () {
+          btn.textContent = "Copiado!";
+          setTimeout(function () { btn.textContent = "Copiar relatório"; }, 1800);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done, done);
+        } else {
+          var r = document.createRange();
+          r.selectNode(document.getElementById("report-text"));
+          window.getSelection().removeAllRanges();
+          window.getSelection().addRange(r);
+          document.execCommand("copy");
+          done();
+        }
+      });
       verdict.hidden = false;
     }
 
@@ -86,11 +111,13 @@
     }
     var kind = /^eyJ/.test(key) ? "chave antiga (JWT)" : "chave publicável";
     c1.pass("Endereço: " + base + " · Tipo: " + kind);
+    report.push("INFO | chave: " + key.slice(0, 18) + "… | navegador: " + navigator.userAgent);
 
     // 2. table reachable
     var c2 = add("Tabela de cartões no Supabase");
     fetch(base + "/rest/v1/cards?select=slug&limit=1", { headers: headers })
       .then(function (r) {
+        report.push("INFO | GET /cards -> HTTP " + r.status);
         if (r.status === 404) throw new Error("no_table");
         if (r.status === 401 || r.status === 403) throw new Error("auth_" + r.status);
         if (!r.ok) throw new Error("http_" + r.status);
@@ -105,6 +132,7 @@
           headers: headers,
           body: JSON.stringify({ card_data: { n: "Teste de diagnóstico" } })
         }).then(function (r) {
+          report.push("INFO | POST /rpc/create_card -> HTTP " + r.status);
           if (r.status === 404) throw new Error("no_function");
           if (!r.ok) throw new Error("http_" + r.status);
           return r.json();
