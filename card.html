@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Digital card — FlechaCard</title>
-  <meta name="description" content="A FlechaCard digital business card.">
+  <title>Cartão digital — FlechaCard</title>
+  <meta name="description" content="Um cartão de visita digital FlechaCard.">
   <meta name="robots" content="noindex">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>➳</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,7 +16,7 @@
 <body class="app-page app-page--card">
 
   <main class="cardview">
-    <!-- shown when the link carries a valid profile -->
+    <!-- mostrado quando o link traz um perfil válido -->
     <article class="profile" id="profile" hidden>
       <div class="profile__head">
         <div class="profile__avatar" id="p-avatar" aria-hidden="true"></div>
@@ -25,28 +25,28 @@
         <p class="profile__bio" id="p-bio"></p>
       </div>
       <div class="profile__actions">
-        <button class="btn btn--copper profile__save" id="save-contact" type="button">Save contact</button>
+        <button class="btn btn--copper profile__save" id="save-contact" type="button">Guardar contacto</button>
         <div class="profile__links" id="p-links"></div>
       </div>
       <p class="profile__foot">
-        Shared via <a href="index.html"><span aria-hidden="true">➳</span> FlechaCard</a>
-        · <a id="p-edit" href="create.html">Edit this card</a>
+        Partilhado via <a href="index.html"><span aria-hidden="true">➳</span> FlechaCard</a>
+        · <a id="p-edit" href="create.html">Editar este cartão</a>
       </p>
     </article>
 
-    <!-- shown when the link has no profile data -->
+    <!-- mostrado quando o link não traz dados de perfil -->
     <article class="profile profile--empty" id="empty" hidden>
       <div class="profile__head">
         <div class="profile__avatar" aria-hidden="true">➳</div>
-        <h1 class="profile__name">No card in this link</h1>
-        <p class="profile__bio">This page shows a FlechaCard when its link
-           carries one. The link you opened doesn't — it may have been
-           trimmed by the app it was shared in.</p>
+        <h1 class="profile__name">Este link não tem cartão</h1>
+        <p class="profile__bio">Esta página mostra um FlechaCard quando o link
+           traz um. O link que abriu não traz — pode ter sido cortado pela app
+           onde foi partilhado.</p>
       </div>
       <div class="profile__actions">
-        <a class="btn btn--copper" href="create.html">Create your own card</a>
+        <a class="btn btn--copper" href="create.html">Criar o meu cartão</a>
       </div>
-      <p class="profile__foot"><a href="index.html"><span aria-hidden="true">➳</span> FlechaCard</a> — one tap, straight to you.</p>
+      <p class="profile__foot"><a href="index.html"><span aria-hidden="true">➳</span> FlechaCard</a> — um toque, direto até si.</p>
     </article>
   </main>
 
