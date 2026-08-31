@@ -67,3 +67,59 @@ means:
 
 Responsive down to mobile, keyboard-focus visible, `prefers-reduced-motion`
 respected, and all content remains visible with JavaScript disabled.
+
+## Payments (PaySuite)
+
+Card orders are paid by M-Pesa, e-Mola or card through
+[PaySuite](https://paysuite.co.mz). Because this is a static site, the
+gateway secret can never live in `js/` — the whole payment path runs in
+two Supabase Edge Functions.
+
+```
+encomendar.html   # order form: pick material, quantity, delivery details
+js/order.js       #   creates the order, starts the payment, waits
+obrigado.html     # post-payment status page (polls until confirmed)
+
+supabase/orders.sql                     # products + orders tables, RPCs
+supabase/functions/_shared/paysuite.ts  # every PaySuite-specific detail
+supabase/functions/paysuite-checkout/   # starts a payment (secret key)
+supabase/functions/paysuite-webhook/    # receives + verifies confirmation
+```
+
+### Two rules the code is built around
+
+1. **The price never comes from the browser.** The site sends only a
+   product code; `create_order` looks the price up in the `products`
+   table. Editing the JavaScript cannot change what is charged.
+2. **The webhook never decides anything.** Its endpoint is public, so a
+   confirmation body is treated as a hint, not as truth: the function
+   verifies the signature, then calls PaySuite back to ask the real
+   status, and only marks an order paid if the amount matches.
+
+### Setup
+
+1. Run `supabase/orders.sql` in the SQL Editor (after `setup.sql`).
+2. Store the secrets — these never enter the repo or the browser:
+   ```
+   supabase secrets set PAYSUITE_API_KEY=...
+   supabase secrets set PAYSUITE_WEBHOOK_SECRET=...
+   supabase secrets set SITE_URL=https://flechacard.com
+   ```
+3. Deploy both functions:
+   ```
+   supabase functions deploy paysuite-checkout
+   supabase functions deploy paysuite-webhook --no-verify-jwt
+   ```
+   (`--no-verify-jwt` because PaySuite has no Supabase session; the
+   signature is what authenticates it.)
+4. In the PaySuite dashboard, set the webhook/callback URL to
+   `https://<project>.supabase.co/functions/v1/paysuite-webhook`.
+5. Confirm the API shape. Everything PaySuite-specific — base URL,
+   request body, field names, signature header — is isolated in
+   `supabase/functions/_shared/paysuite.ts`, written against the
+   conventional REST shape and reading several possible field names for
+   each value. Check it against your PaySuite API docs and adjust that
+   one file; nothing else needs to change.
+
+Prices live in the `products` table, not in the HTML. To change one,
+update the row — the order page reads the catalogue on load.

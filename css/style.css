@@ -786,7 +786,8 @@ a { color: var(--cobalt); }
   text-transform: uppercase;
   color: var(--copper);
 }
-.field input {
+.field input,
+.field select {
   font-family: var(--font-body);
   font-size: 1rem;
   color: var(--ink);
@@ -796,7 +797,8 @@ a { color: var(--cobalt); }
   padding: 0.65rem 0.85rem;
   transition: border-color 0.15s ease;
 }
-.field input:focus {
+.field input:focus,
+.field select:focus {
   outline: none;
   border-color: var(--cobalt);
 }
@@ -1327,4 +1329,35 @@ a { color: var(--cobalt); }
 @media (max-width: 640px) {
   .cardrow { align-items: flex-start; }
   .cardrow__tools { width: 100%; }
+}
+
+/* ======================= ENCOMENDA E PAGAMENTO ======================= */
+.app__inner--narrow { max-width: 620px; }
+
+.order-total {
+  font-family: var(--font-display);
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: var(--copper);
+  margin: 0.2rem 0 0;
+  line-height: 1.2;
+}
+.order-ref {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  color: var(--slate);
+  background: var(--porcelain);
+  border: 1.5px dashed var(--line);
+  border-radius: 10px;
+  padding: 0.7rem 0.9rem;
+  margin: 1.1rem 0;
+}
+.order-ref strong {
+  color: var(--ink);
+  letter-spacing: 0.06em;
+}
+.form__foot {
+  font-size: 0.85rem;
+  color: var(--slate);
+  margin-top: 0.9rem;
 }

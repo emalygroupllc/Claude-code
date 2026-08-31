@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Encomenda recebida — FlechaCard</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>➳</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script>document.documentElement.classList.add("js");</script>
+</head>
+<body class="app-page">
+
+  <header class="nav">
+    <div class="nav__inner">
+      <a class="nav__logo" href="index.html" aria-label="FlechaCard — início">
+        <span class="nav__glyph" aria-hidden="true">➳</span>FlechaCard
+      </a>
+      <nav class="nav__links" aria-label="Principal">
+        <a href="index.html">Página inicial</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="app">
+    <div class="app__inner app__inner--narrow">
+
+      <p class="loading" id="loading">A confirmar o seu pagamento…</p>
+
+      <section id="paid" hidden>
+        <p class="eyebrow">Pagamento confirmado</p>
+        <h1 class="app__title">Obrigado — está encomendado.</h1>
+        <p class="app__lead">Recebemos o seu pagamento. Vamos preparar o seu
+           cartão e entrar em contacto pelo número que nos deixou para
+           combinar a entrega.</p>
+        <p class="order-ref">Referência <strong class="ref-out"></strong></p>
+        <p class="app__lead">Guarde esta referência — é por ela que
+           encontramos a sua encomenda.</p>
+        <div class="form__actions">
+          <a class="btn btn--copper" href="create.html">Preparar o meu cartão digital</a>
+          <a class="btn btn--outline" href="index.html">Voltar ao início</a>
+        </div>
+      </section>
+
+      <section id="pending" hidden>
+        <p class="eyebrow">A aguardar</p>
+        <h1 class="app__title">Ainda não recebemos o pagamento.</h1>
+        <p class="app__lead">Se acabou de confirmar no telemóvel, aguarde um
+           momento — esta página atualiza-se sozinha. Se cancelou, pode
+           tentar outra vez.</p>
+        <p class="order-ref">Referência <strong class="ref-out"></strong></p>
+        <div class="form__actions">
+          <a class="btn btn--outline" href="encomendar.html">Tentar outra vez</a>
+        </div>
+      </section>
+
+      <section id="failed" hidden>
+        <p class="eyebrow">Pagamento não concluído</p>
+        <h1 class="app__title">O pagamento não passou.</h1>
+        <p class="app__lead">Nada lhe foi cobrado. Verifique o saldo e o
+           número e tente novamente — ou fale connosco e tratamos disso
+           consigo.</p>
+        <p class="order-ref">Referência <strong class="ref-out"></strong></p>
+        <div class="form__actions">
+          <a class="btn btn--copper" href="encomendar.html">Tentar outra vez</a>
+          <a class="btn btn--outline" href="index.html#contacto">Falar connosco</a>
+        </div>
+      </section>
+
+      <section id="unknown" hidden>
+        <h1 class="app__title">Encomenda não encontrada</h1>
+        <p class="app__lead">Não encontrámos nenhuma encomenda com esta
+           referência. Verifique o link ou fale connosco.</p>
+        <div class="form__actions">
+          <a class="btn btn--outline" href="index.html">Voltar ao início</a>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="footer footer--slim">
+    <p class="footer__legal">© <span id="year">2026</span> FlechaCard · <a href="index.html">página inicial</a></p>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script>
+  (function () {
+    "use strict";
+    var CFG = window.FLECHA_CONFIG || {};
+    var apiBase = String(CFG.supabaseUrl || "").replace(/\/+$/, "");
+    var ref = new URLSearchParams(location.search).get("ref") || "";
+    document.getElementById("year").textContent = String(new Date().getFullYear());
+
+    var loading = document.getElementById("loading");
+
+    function show(id) {
+      loading.hidden = true;
+      var el = document.getElementById(id);
+      el.hidden = false;
+      Array.prototype.forEach.call(el.querySelectorAll(".ref-out"), function (n) {
+        n.textContent = ref;
+      });
+    }
+
+    if (!ref || !apiBase) { show("unknown"); return; }
+
+    var tries = 0;
+    (function poll() {
+      tries++;
+      fetch(apiBase + "/rest/v1/rpc/order_status", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: CFG.supabaseAnonKey,
+          Authorization: "Bearer " + CFG.supabaseAnonKey
+        },
+        body: JSON.stringify({ p_reference: ref })
+      }).then(function (r) { return r.json(); }).then(function (s) {
+        if (!s || !s.status) { show("unknown"); return; }
+        if (s.status === "paid") { show("paid"); return; }
+        if (s.status === "failed" || s.status === "cancelled") { show("failed"); return; }
+        // ainda pendente: a confirmação da PaySuite pode demorar uns segundos
+        if (tries === 1) show("pending");
+        if (tries < 40) setTimeout(poll, 3000);
+      }).catch(function () {
+        if (tries < 40) setTimeout(poll, 5000); else show("unknown");
+      });
+    })();
+  })();
+  </script>
+</body>
+</html>

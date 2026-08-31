@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Encomendar — FlechaCard</title>
+  <meta name="description" content="Encomende o seu FlechaCard e pague por M-Pesa, e-Mola ou cartão.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>➳</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script>document.documentElement.classList.add("js");</script>
+</head>
+<body class="app-page">
+
+  <header class="nav">
+    <div class="nav__inner">
+      <a class="nav__logo" href="index.html" aria-label="FlechaCard — início">
+        <span class="nav__glyph" aria-hidden="true">➳</span>FlechaCard
+      </a>
+      <nav class="nav__links" aria-label="Principal">
+        <a href="index.html#cards">Cartões</a>
+        <a href="index.html#faq">Perguntas</a>
+        <a href="entrar.html" id="nav-account">Entrar</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="app">
+    <div class="app__inner">
+      <p class="eyebrow">Encomenda</p>
+      <h1 class="app__title">Encomendar o seu FlechaCard</h1>
+      <p class="app__lead">Escolha o material, diga-nos para onde vai o
+         cartão e pague por M-Pesa, e-Mola ou cartão. Recebe a confirmação
+         no mesmo instante.</p>
+
+      <form class="form" id="order-form" novalidate>
+        <fieldset class="form__group">
+          <legend>O que quer</legend>
+          <div class="field field--full">
+            <label for="f-product">Material</label>
+            <select id="f-product" name="produto" required>
+              <option value="classico">Clássico — PVC reciclado — 1.999 MT</option>
+              <option value="bambu" selected>Bambu — gravado a laser — 2.799 MT</option>
+              <option value="metal">Metal — aço escovado — 3.999 MT</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-qty">Quantos cartões</label>
+            <input id="f-qty" name="qty" type="number" min="1" max="500" value="1" inputmode="numeric">
+          </div>
+          <div class="field">
+            <span class="field__label-text">Total a pagar</span>
+            <p class="order-total" id="order-total">2.799 MT</p>
+          </div>
+        </fieldset>
+
+        <fieldset class="form__group">
+          <legend>Para quem</legend>
+          <div class="field field--full">
+            <label for="f-name">Nome completo <span class="field__req">obrigatório</span></label>
+            <input id="f-name" name="nome" type="text" autocomplete="name" required placeholder="Ana Macuácua">
+          </div>
+          <div class="field">
+            <label for="f-phone">Telefone <span class="field__req">obrigatório</span></label>
+            <input id="f-phone" name="tel" type="tel" autocomplete="tel" required
+                   inputmode="tel" placeholder="84 123 4567">
+          </div>
+          <div class="field">
+            <label for="f-email">Email</label>
+            <input id="f-email" name="email" type="email" autocomplete="email" placeholder="ana@exemplo.co.mz">
+          </div>
+          <div class="field field--full">
+            <label for="f-notes">Morada de entrega e notas</label>
+            <input id="f-notes" name="notas" type="text" maxlength="300"
+                   placeholder="Av. Julius Nyerere 123, Maputo — entregar depois das 14h">
+          </div>
+          <div class="field field--full">
+            <label for="f-slug">Link do cartão digital <span class="field__req">opcional</span></label>
+            <input id="f-slug" name="slug" type="text" inputmode="url"
+                   autocapitalize="none" autocorrect="off" spellcheck="false"
+                   maxlength="40" placeholder="ana-macuacua">
+            <p class="slug-hint">Se já criou o seu cartão, diga-nos o nome do
+               link e o NFC vem programado de fábrica. Se ainda não criou,
+               deixe vazio — programamos depois.</p>
+          </div>
+        </fieldset>
+
+        <p class="form__error" id="form-error" hidden></p>
+
+        <div class="form__actions">
+          <button class="btn btn--copper" type="submit" id="pay-btn">
+            Pagar <span id="pay-amount">2.799 MT</span> <span aria-hidden="true">→</span>
+          </button>
+        </div>
+        <p class="form__foot">Pagamento processado pela PaySuite. Não guardamos
+           dados do seu cartão nem o seu PIN.</p>
+      </form>
+
+      <section class="result" id="waiting" hidden aria-live="polite">
+        <h2>A aguardar o seu pagamento</h2>
+        <p class="result__hint" id="waiting-hint">
+          Enviámos um pedido de pagamento para o seu telemóvel. Abra a
+          notificação, confirme o valor e introduza o seu PIN. Esta página
+          atualiza-se sozinha.
+        </p>
+        <p class="order-ref">Referência <strong id="waiting-ref"></strong></p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer footer--slim">
+    <p class="footer__legal">© <span id="year">2026</span> FlechaCard · <a href="index.html">página inicial</a></p>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/order.js"></script>
+</body>
+</html>
