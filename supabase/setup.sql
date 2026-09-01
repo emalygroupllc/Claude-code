@@ -37,8 +37,11 @@ create index if not exists cards_owner_idx on public.cards (owner_id);
 alter table public.cards drop constraint if exists cards_slug_valid;
 alter table public.cards add constraint cards_slug_valid check (
   slug ~ '^[a-z0-9][a-z0-9-]{1,38}[a-z0-9]$'
+  -- Um cartão com um destes nomes ficava inalcançável: o alojamento serve
+  -- o ficheiro do site e o cartão nunca chega a ser procurado.
   and slug not in (
-    'index', 'create', 'card', 'diagnostico', 'css', 'js', 'supabase',
+    'index', 'create', 'card', 'diagnostico', 'entrar', 'painel',
+    'encomendar', 'obrigado', 'css', 'js', 'supabase',
     'assets', 'api', 'admin', 'www', 'flechacard', 'readme', 'robots',
     'sitemap', 'favicon', '404'
   )

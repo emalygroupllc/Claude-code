@@ -1,0 +1,28 @@
+# FlechaCard — cabeçalhos HTTP (Cloudflare Pages e Netlify).
+
+/*
+  # Ninguém pode meter o site dentro de uma moldura noutro site. É o que
+  # impede alguém de pôr a página de pagamento por baixo de botões
+  # invisíveis e enganar quem clica.
+  X-Frame-Options: DENY
+  # O browser respeita o tipo declarado em vez de o adivinhar.
+  X-Content-Type-Options: nosniff
+  # Ao sair do site não revelamos o endereço exato de onde a pessoa veio
+  # — os links dos cartões são privados por natureza.
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=()
+  # Lista do que a página pode carregar. Se um dia acrescentar outro CDN
+  # ou outro serviço, tem de entrar aqui, senão o browser bloqueia-o em
+  # silêncio.
+  #   'unsafe-inline' em script-src: as páginas têm <script> escritos
+  #   dentro do HTML. Tirar isto obriga a mover esse código para ficheiros
+  #   próprios primeiro.
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://*.supabase.co; form-action 'self'; frame-ancestors 'none'; base-uri 'self'
+
+# O CSS e o JS mudam a cada publicação e não têm hash no nome, por isso
+# não podem ficar guardados para sempre no browser de quem já visitou.
+/css/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/js/*
+  Cache-Control: public, max-age=0, must-revalidate

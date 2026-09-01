@@ -1,0 +1,19 @@
+# FlechaCard — regras de encaminhamento (Cloudflare Pages e Netlify).
+#
+# Os links dos cartões são o produto: flechacard.com/ana-macuacua. Não
+# existe nenhum ficheiro com esse nome, por isso é preciso dizer ao
+# alojamento o que servir quando o endereço não corresponde a nada.
+#
+# Ficheiros reais ganham sempre: /css/style.css, /create.html e o resto
+# continuam a ser servidos normalmente. Só o que sobra cai nesta regra.
+#
+# O 200 no fim é o que importa. Sem ele a página do cartão seria servida
+# com o código 404 — funcionava no browser, mas alguns leitores de NFC,
+# pré-visualizações de links e apps de mensagens tratam um 404 como link
+# partido. Com 200, um link de cartão é uma página normal.
+#
+# Quem abre um endereço que não existe mesmo continua bem servido: a
+# própria página procura o cartão, não encontra, e mostra "Cartão não
+# encontrado".
+
+/*    /404.html    200

@@ -123,3 +123,38 @@ supabase/functions/paysuite-webhook/    # receives + verifies confirmation
 
 Prices live in the `products` table, not in the HTML. To change one,
 update the row — the order page reads the catalogue on load.
+
+## Hosting
+
+Static files plus two Edge Functions, so any static host works. These
+notes assume **Cloudflare Pages** (free, unmetered bandwidth, fast from
+Mozambique); Netlify reads the same two config files if you prefer it.
+
+```
+_redirects   # unknown paths → 404.html with a 200, so /<slug> card
+             #   links behave like normal pages
+_headers     # CSP, clickjacking and referrer protection, cache rules
+```
+
+### Deploy
+
+1. Connect the repo in Cloudflare Pages → Create project → Connect to Git.
+2. Build settings: **no framework, no build command**, output directory
+   `/`. There is no build step — the files ship as they are.
+3. First deploy lands on `<project>.pages.dev`. Test it there before
+   pointing a domain at it.
+4. Custom domain: Pages → Custom domains → add it, then create the CNAME
+   it shows you. HTTPS is automatic.
+5. Once the domain is live, set `siteBase` in `js/config.js` to
+   `https://yourdomain/` and update Supabase → Authentication → URL
+   Configuration, or confirmation emails will lead nowhere.
+
+Left empty, `siteBase` falls back to whatever address is serving the
+site, so `pages.dev` works for testing without any config change.
+
+### After changing what the site loads
+
+`_headers` contains a Content-Security-Policy naming every allowed
+external source (Google Fonts, jsdelivr, Supabase). Adding a new script,
+font or API means adding it there too — otherwise the browser blocks it
+silently and the only clue is an error in the developer console.
