@@ -158,3 +158,22 @@ site, so `pages.dev` works for testing without any config change.
 external source (Google Fonts, jsdelivr, Supabase). Adding a new script,
 font or API means adding it there too — otherwise the browser blocks it
 silently and the only clue is an error in the developer console.
+
+### Cloudflare: Workers vs Pages
+
+Cloudflare now steers new projects into **Workers**, whose Git setup
+runs `npx wrangler deploy`. That path needs `wrangler.jsonc` (assets
+only — the site has no server code) and `.assetsignore`, which keeps
+`supabase/` and the rest of the source off the public CDN.
+
+One thing to verify on that path: card links must be served with a
+**200**, which is what `_redirects` is for. Workers static assets read
+`_redirects`, but confirm it after the first deploy — open a card link
+and check the status in the browser's Network tab. A 404 there means the
+rewrite is not being applied; Pages and Netlify both handle it, so
+switch rather than fight it.
+
+Whichever you pick, set the **production branch** to the branch this
+site actually lives on. The repository's default branch holds an older
+copy of FlechaCard, and deploying it silently ships a site with no
+accounts, dashboard or payments.

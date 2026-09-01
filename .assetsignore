@@ -1,0 +1,15 @@
+# O que NÃO é para publicar na internet.
+#
+# A pasta do site é a raiz do repositório, por isso sem esta lista o
+# Cloudflare publicaria também o código do servidor. Nada aqui tem
+# senhas — as chaves vivem nos secrets do Supabase — mas o SQL e o
+# código das funções de pagamento não têm nada que estar à mão de
+# qualquer pessoa que adivinhe o endereço.
+
+supabase/
+.claude/
+.git/
+.gitignore
+.assetsignore
+wrangler.jsonc
+README.md

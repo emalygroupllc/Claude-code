@@ -1,0 +1,29 @@
+{
+  // FlechaCard — configuração para publicar no Cloudflare Workers.
+  //
+  // O site não tem código de servidor: são ficheiros estáticos e mais
+  // nada. Por isso esta configuração não tem "main" — só diz ao
+  // Cloudflare que pasta servir.
+  //
+  // As Edge Functions do pagamento NÃO vivem aqui. Essas são do Supabase
+  // e publicam-se com `supabase functions deploy`.
+  "name": "flechacard",
+  "compatibility_date": "2025-11-01",
+
+  "assets": {
+    // A raiz do repositório. O que não deve ir para a internet está
+    // listado em .assetsignore.
+    "directory": "./",
+
+    // Endereços que não correspondem a nenhum ficheiro recebem a
+    // 404.html — é ela que procura o cartão e o mostra.
+    //
+    // Isto devolve o código 404. Para os links dos cartões o que
+    // queremos é 200, e disso trata o ficheiro _redirects. Confirme
+    // depois de publicar: abra o link de um cartão e veja o código na
+    // consola do browser (separador Network). Se aparecer 404 em vez de
+    // 200, o _redirects não está a ser lido por este caminho — mude
+    // para o Cloudflare Pages ou Netlify, onde funciona.
+    "not_found_handling": "404-page"
+  }
+}
