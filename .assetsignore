@@ -5,8 +5,12 @@
 # senhas — as chaves vivem nos secrets do Supabase — mas o SQL e o
 # código das funções de pagamento não têm nada que estar à mão de
 # qualquer pessoa que adivinhe o endereço.
+#
+# .wrangler/ é lixo de compilação. Sem esta linha o Cloudflare publica
+# ficheiros como no-op-worker.js.map, que não são parte do site.
 
 supabase/
+.wrangler/
 .claude/
 .git/
 .gitignore

@@ -7,8 +7,21 @@
   //
   // As Edge Functions do pagamento NÃO vivem aqui. Essas são do Supabase
   // e publicam-se com `supabase functions deploy`.
+  // O nome do serviço no painel do Cloudflare manda sobre este campo,
+  // por isso publicar a partir do painel mantém o nome que lá está.
   "name": "flechacard",
   "compatibility_date": "2025-11-01",
+
+  // O endereço .workers.dev, para testar antes de haver domínio próprio.
+  // Quando o domínio estiver a apontar para aqui, pôr false esconde esta
+  // segunda porta de entrada para o site.
+  "workers_dev": true,
+
+  // Cada publicação ganha um endereço próprio e público se isto ficar
+  // ligado — versões antigas do site, com configuração antiga, a
+  // continuar acessíveis a quem tenha o link. Num site com contas e
+  // pagamentos não vale a pena.
+  "preview_urls": false,
 
   "assets": {
     // A raiz do repositório. O que não deve ir para a internet está
