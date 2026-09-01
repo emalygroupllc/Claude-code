@@ -177,3 +177,26 @@ Whichever you pick, set the **production branch** to the branch this
 site actually lives on. The repository's default branch holds an older
 copy of FlechaCard, and deploying it silently ships a site with no
 accounts, dashboard or payments.
+
+### GitHub Pages (no third-party account needed)
+
+Pages serves this repo as-is. `.nojekyll` is what makes that work: without
+it GitHub runs the files through Jekyll, which ignores anything starting
+with an underscore and would quietly drop `_headers` and `_redirects`.
+
+Settings → Pages → Source: **Deploy from a branch** → branch
+`claude/flechacard-website-hyuf80`, folder `/ (root)`.
+
+Two differences from Pages/Netlify, neither a blocker:
+
+- **Card links return 404, not 200.** GitHub Pages serves `404.html` for
+  unknown paths — which is exactly how card links resolve — but always
+  with a 404 status, and it does not read `_redirects`. Browsers render
+  the card correctly; some link previews and NFC readers treat a 404 as
+  broken. Fine for testing, worth moving off before printing cards.
+- **`_headers` is ignored**, so the CSP and other security headers are
+  not applied.
+
+The site lands on a subpath (`…github.io/Claude-code/`). That works —
+every link is relative and `404.html` sets its `<base>` from the path —
+and a custom domain later moves it to the root.
